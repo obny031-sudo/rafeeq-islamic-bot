@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def get_main_menu_keyboard(language: str = "ar", user_id: int = None) -> InlineKeyboardMarkup:
@@ -21,6 +21,14 @@ def get_main_menu_keyboard(language: str = "ar", user_id: int = None) -> InlineK
     )
     builder.row(
         InlineKeyboardButton(text="📿 التسبيح", callback_data="tasbeeh")
+    )
+    
+    # Web App button
+    builder.row(
+        InlineKeyboardButton(
+            text="🚀 فتح تطبيق رفيق (Mini App)",
+            web_app=WebAppInfo(url="https://rafeeq-islamic-bot-ten.vercel.app")
+        )
     )
     
     # Dynamic admin button for admin users only

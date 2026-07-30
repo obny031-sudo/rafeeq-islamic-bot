@@ -136,6 +136,21 @@ async def main():
 
     await run_startup_health_checks(bot)
 
+    # Set up chat menu button for web app
+    try:
+        from aiogram.types import MenuButtonWebApp, WebAppInfo
+        web_app_url = "https://rafeeq-islamic-bot-ten.vercel.app"
+        
+        await bot.set_chat_menu_button(
+            menu_button=MenuButtonWebApp(
+                text="📱 افتح التطبيق",
+                web_app=WebAppInfo(url=web_app_url)
+            )
+        )
+        logger.info("Chat menu button configured for web app")
+    except Exception as e:
+        logger.warning(f"Failed to set chat menu button: {e}")
+
     scheduler_service.set_bot(bot)
     await scheduler_service.start()
     logger.info("Scheduler started successfully")
