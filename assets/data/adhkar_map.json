@@ -1,0 +1,38 @@
+[
+  {
+    "id": "morning_01",
+    "path": "assets/images/adhkar/page_1.jpg",
+    "category": "morning_adhkar",
+    "page_number": 1
+  },
+  {
+    "id": "morning_02",
+    "path": "assets/images/adhkar/page_2.jpg",
+    "category": "morning_adhkar",
+    "page_number": 2
+  },
+  {
+    "id": "morning_03",
+    "path": "assets/images/adhkar/page_3.jpg",
+    "category": "morning_adhkar",
+    "page_number": 3
+  },
+  {
+    "id": "evening_01",
+    "path": "assets/images/adhkar/page_4.jpg",
+    "category": "evening_adhkar",
+    "page_number": 4
+  },
+  {
+    "id": "evening_02",
+    "path": "assets/images/adhkar/page_5.jpg",
+    "category": "evening_adhkar",
+    "page_number": 5
+  },
+  {
+    "id": "evening_03",
+    "path": "assets/images/adhkar/page_6.jpg",
+    "category": "evening_adhkar",
+    "page_number": 6
+  }
+]

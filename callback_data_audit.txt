@@ -1,0 +1,198 @@
+﻿            InlineKeyboardButton(text=f"🌅 الصباح: {morning_time}", callback_data="set_morning_time")
+            InlineKeyboardButton(text=f"🌙 المساء: {evening_time}", callback_data="set_evening_time")
+            InlineKeyboardButton(text=f"😴 النوم: {sleep_time}", callback_data="set_sleep_time")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 إلغاء", callback_data="customize_adhkar_timings")
+        InlineKeyboardButton(text="🔙 إلغاء", callback_data="customize_adhkar_timings")
+        InlineKeyboardButton(text="🔙 إلغاء", callback_data="customize_adhkar_timings")
+            InlineKeyboardButton(text=f"{quran_emoji} القرآن", callback_data="admin_toggle_quran"),
+            InlineKeyboardButton(text=f"{hadith_emoji} الأحاديث", callback_data="admin_toggle_hadith")
+            InlineKeyboardButton(text=f"{adhkar_emoji} الأذكار", callback_data="admin_toggle_adhkar"),
+            InlineKeyboardButton(text=f"{maintenance_emoji} وضع الصيانة", callback_data="admin_toggle_maintenance")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="admin_toggle_quran"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="admin_toggle_hadith"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="admin_toggle_adhkar"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="admin_toggle_maintenance"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="📊 الإحصائيات المتقدمة", callback_data="admin_analytics")
+            InlineKeyboardButton(text="📈 إحصائيات الاستخدام", callback_data="admin_module_stats")
+            InlineKeyboardButton(text="👥 إدارة المستخدمين", callback_data="admin_users")
+            InlineKeyboardButton(text="🔍 البحث عن مستخدم", callback_data="admin_search")
+            InlineKeyboardButton(text="🚫 المستخدمون المحظورون", callback_data="admin_banned")
+            InlineKeyboardButton(text="📢 إرسال إعلان", callback_data="admin_broadcast")
+            InlineKeyboardButton(text="🔧 تفعيل الميزات", callback_data="admin_toggles")
+            InlineKeyboardButton(text="🔨 وضع الصيانة", callback_data="admin_maintenance")
+            InlineKeyboardButton(text="🗑️ مسح ذاكرة التخزين المؤقت", callback_data="admin_flush_redis")
+            InlineKeyboardButton(text="📋 سجل الأخطاء", callback_data="admin_logs")
+            InlineKeyboardButton(text="🏥 حالة النظام", callback_data="admin_health")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="main_menu")
+            InlineKeyboardButton(text="📊 الإحصائيات المتقدمة", callback_data="admin_analytics")
+            InlineKeyboardButton(text="📈 إحصائيات الاستخدام", callback_data="admin_module_stats")
+            InlineKeyboardButton(text="👥 إدارة المستخدمين", callback_data="admin_users")
+            InlineKeyboardButton(text="🔍 البحث عن مستخدم", callback_data="admin_search")
+            InlineKeyboardButton(text="📢 إرسال إعلان", callback_data="admin_broadcast")
+            InlineKeyboardButton(text="🔧 تفعيل الميزات", callback_data="admin_toggles")
+            InlineKeyboardButton(text="🔨 وضع الصيانة", callback_data="admin_maintenance")
+            InlineKeyboardButton(text="📋 سجل الأخطاء", callback_data="admin_logs")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="main_menu")
+        builder.row(InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel"))
+        builder.row(InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel"))
+            InlineKeyboardButton(text="🔍 البحث عن مستخدم", callback_data="admin_search")
+            InlineKeyboardButton(text="🚫 المستخدمون المحظورون", callback_data="admin_banned")
+            InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+                    InlineKeyboardButton(text="✅ إلغاء الحظر", callback_data=f"admin_unban_{user.id}")
+                    InlineKeyboardButton(text="🚫 حظر المستخدم", callback_data=f"admin_ban_{user.id}")
+                InlineKeyboardButton(text="🔙 العودة لإدارة المستخدمين", callback_data="admin_users")
+        builder.row(InlineKeyboardButton(text="🔙 العودة لإدارة المستخدمين", callback_data="admin_users"))
+        InlineKeyboardButton(text="👥 جميع المستخدمين", callback_data="broadcast_target_all")
+        InlineKeyboardButton(text="🔥 المستخدمون النشطون (7 أيام)", callback_data="broadcast_target_active")
+        InlineKeyboardButton(text="💤 المستخدمون غير النشطين", callback_data="broadcast_target_inactive")
+        InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+                    callback_data=f"toggle_{feature}"
+            InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+                InlineKeyboardButton(text="✅ تعطيل وضع الصيانة", callback_data="maintenance_off")
+                InlineKeyboardButton(text="🔴 تفعيل وضع الصيانة", callback_data="maintenance_on")
+            InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+                    callback_data=f"toggle_{feature}"
+            InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+                InlineKeyboardButton(text="✅ تعطيل وضع الصيانة", callback_data="maintenance_off")
+                InlineKeyboardButton(text="🔴 تفعيل وضع الصيانة", callback_data="maintenance_on")
+            InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel")
+        builder.row(InlineKeyboardButton(text="🔄 تحديث السجل", callback_data="admin_logs"))
+        builder.row(InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel"))
+        builder.row(InlineKeyboardButton(text="🔄 تحديث الحالة", callback_data="admin_health"))
+        builder.row(InlineKeyboardButton(text="🔙 العودة لمركز التحكم", callback_data="admin_panel"))
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_daily_broadcasts"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_daily_broadcasts"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_friday_reminder"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_friday_reminder"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 حديث آخر", callback_data="hadith_bukhari"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="hadith")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 حديث آخر", callback_data="hadith_muslim"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="hadith")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 حديث آخر", callback_data="hadith_tirmidhi"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="hadith")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 حديث آخر", callback_data="hadith_general"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="hadith")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="hadith")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                    callback_data=f"lang_select_{lang_code}"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                    callback_data=f"lang_select_{lc}"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_low_data_mode"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data="toggle_low_data_mode"
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data=f"mood_select_{mood_key}"
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 تغيير المزاج", callback_data="mood_adhkar_menu")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="📜 قراءة السور", callback_data="quran_surah_list"),
+        InlineKeyboardButton(text="🔍 البحث في القرآن", callback_data="quran_search")
+        InlineKeyboardButton(text="📍 موضع القراءة الأخير", callback_data="quran_last_position"),
+        InlineKeyboardButton(text="📖 الأجزاء", callback_data="quran_juz")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔍 البحث في الأحاديث", callback_data="hadith_search"),
+        InlineKeyboardButton(text="📚 صحيح البخاري", callback_data="hadith_bukhari")
+        InlineKeyboardButton(text="📖 صحيح مسلم", callback_data="hadith_muslim"),
+        InlineKeyboardButton(text="📜 سنن الترمذي", callback_data="hadith_tirmidhi")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🌅 أذكار الصباح", callback_data="adhkar_morning"),
+        InlineKeyboardButton(text="🌙 أذكار المساء", callback_data="adhkar_evening")
+        InlineKeyboardButton(text="😴 أذكار النوم", callback_data="adhkar_sleep"),
+        InlineKeyboardButton(text="🤲 أذكار عامة", callback_data="adhkar_general")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🕐 مواقيت الصلاة", callback_data="prayer_times"),
+        InlineKeyboardButton(text="🧭 اتجاه القبلة", callback_data="qibla_direction")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="📿 بدء التسبيح (0)", callback_data="tasbeeh_start")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 تحديث", callback_data="prayer_times"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="prayer")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+            InlineKeyboardButton(text="🔄 تحديث", callback_data="qibla"),
+            InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="prayer")
+            InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="prayer")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 العودة للقائمة", callback_data="prayer")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data=f"quran_surah_{surah_num}",
+        nav_row.append(InlineKeyboardButton(text="⬅️ السابق", callback_data=f"quran_page_{page - 1}"))
+        nav_row.append(InlineKeyboardButton(text="التالي ➡️", callback_data=f"quran_page_{page + 1}"))
+    builder.row(InlineKeyboardButton(text="🔙 عودة", callback_data="quran"))
+        nav_row.append(InlineKeyboardButton(text="⬅️ السابق", callback_data="quran_ayah_prev"))
+        nav_row.append(InlineKeyboardButton(text="التالي ➡️", callback_data="quran_ayah_next"))
+    builder.row(InlineKeyboardButton(text="🔙 عودة للسور", callback_data="quran_read_surah"))
+    builder.row(InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="main_menu"))
+        InlineKeyboardButton(text="🌐 اللغة: العربية", callback_data="settings_language")
+            callback_data="settings_prayer_notifications",
+            callback_data="settings_daily_wird",
+    builder.row(InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu"))
+    builder.row(InlineKeyboardButton(text="🔙 العودة للإعدادات", callback_data="settings"))
+    builder.row(InlineKeyboardButton(text="🔙 العودة للإعدادات", callback_data="settings"))
+    builder.row(InlineKeyboardButton(text="🔙 العودة للإعدادات", callback_data="settings"))
+                InlineKeyboardButton(text="🔙 العودة", callback_data="quran_last_position")
+        callback_data=f"tafseer_{surah_number}:{ayah_number}"
+        InlineKeyboardButton(text="📿 بدء التسبيح (0)", callback_data="tasbeeh_start")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text=f"📿 اضغط للتسبيح | 0", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ {dhikr_info['emoji']} {dhikr_info['text']}", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text=f"📿 اضغط للتسبيح | {count}", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ {dhikr_info['emoji']} {dhikr_info['text']}", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="📿 اضغط للتسبيح | 0", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ {dhikr_info['emoji']} {dhikr_info['text']}", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="33 تسبيحة", callback_data="tasbeeh_set_target_33")
+        InlineKeyboardButton(text="100 تسبيحة", callback_data="tasbeeh_set_target_100")
+        InlineKeyboardButton(text="1000 تسبيحة", callback_data="tasbeeh_set_target_1000")
+        InlineKeyboardButton(text="غير محدود", callback_data="tasbeeh_set_target_unlimited")
+        InlineKeyboardButton(text="🔙 عودة", callback_data="tasbeeh_start")
+        InlineKeyboardButton(text=f"📿 اضغط للتسبيح | {count}", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ {dhikr_display}", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+                callback_data=f"tasbeeh_set_dhikr_{dhikr_key}"
+        InlineKeyboardButton(text="✏️ ➕ إضافة ذكر مخصص", callback_data="tasbeeh_custom_dhikr")
+        InlineKeyboardButton(text="🔙 عودة", callback_data="tasbeeh_start")
+        InlineKeyboardButton(text=f"📿 اضغط للتسبيح | {count}", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ {dhikr_info['emoji']} {dhikr_info['text']}", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 إلغاء", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text=f"📿 اضغط للتسبيح | {count}", callback_data="tasbeeh_increment")
+        InlineKeyboardButton(text="🔄 إعادة تعيين", callback_data="tasbeeh_reset"),
+        InlineKeyboardButton(text="📊 إحصائياتي", callback_data="tasbeeh_stats")
+        InlineKeyboardButton(text=f"🎯 الهدف: {target_str}", callback_data="tasbeeh_target"),
+        InlineKeyboardButton(text=f"✏️ ✏️ {custom_dhikr[:15]}...", callback_data="tasbeeh_dhikr")
+        InlineKeyboardButton(text="🔙 القائمة الرئيسية", callback_data="go_main_menu")
+        InlineKeyboardButton(text="🔙 عودة", callback_data="tasbeeh_start")
