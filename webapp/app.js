@@ -3045,17 +3045,17 @@ function initAdminSubpageNavigation() {
 
 function handleAdminAction(action) {
     try {
-        // Map actions to subpage IDs
+        // Map actions to subpage IDs (only pages that exist in HTML)
         const actionToSubpage = {
             'broadcast': 'broadcast-center',
             'analytics': 'live-dashboard',
-            'users': 'user-management',
-            'ai': 'ai-chat',
+            'users': 'user-inspector',
+            'ai': 'activity-feed',
             'notifications': 'notification-center',
             'settings': 'feature-flags',
-            'content': 'content-manager',
-            'media': 'media-manager',
-            'reports': 'analytics-dashboard',
+            'content': 'campaign-manager',
+            'media': 'system-monitor',
+            'reports': 'live-dashboard',
             'system': 'system-monitor'
         };
         
@@ -3063,7 +3063,7 @@ function handleAdminAction(action) {
         if (subpageId) {
             showAdminSubpage(subpageId);
         } else {
-            safeShowAlert(`Action: ${action}`);
+            safeShowAlert(`Action: ${action} - قيد التطوير`);
         }
     } catch (error) {
         console.error('Error handling admin action:', error);
@@ -3090,10 +3090,101 @@ function showAdminSubpage(subpageId) {
 }
 
 function initAdminStats() {
-    // Simulated stats for demo
-    document.getElementById('total-users').textContent = '1,234';
-    document.getElementById('total-points').textContent = '45,678';
-    document.getElementById('total-services').textContent = '89';
+    try {
+        // Show loading state with skeletons
+        const statsElements = {
+            'total-users': document.getElementById('total-users'),
+            'total-points': document.getElementById('total-points'),
+            'total-services': document.getElementById('total-services')
+        };
+        
+        // Set loading state with skeleton class
+        Object.values(statsElements).forEach(el => {
+            if (el) {
+                el.classList.add('skeleton');
+                el.textContent = '...';
+            }
+        });
+        
+        // Also add skeleton to mission control values
+        document.querySelectorAll('.mission-value').forEach(el => {
+            el.classList.add('skeleton');
+            el.textContent = '...';
+        });
+        
+        // Fetch real stats from backend API
+        fetch('/api/admin/stats')
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch stats');
+                return response.json();
+            })
+            .then(data => {
+                // Remove skeleton class and update with real data
+                if (statsElements['total-users']) {
+                    statsElements['total-users'].classList.remove('skeleton');
+                    statsElements['total-users'].textContent = data.totalUsers || '0';
+                }
+                if (statsElements['total-points']) {
+                    statsElements['total-points'].classList.remove('skeleton');
+                    statsElements['total-points'].textContent = data.totalPoints || '0';
+                }
+                if (statsElements['total-services']) {
+                    statsElements['total-services'].classList.remove('skeleton');
+                    statsElements['total-services'].textContent = data.totalServices || '0';
+                }
+                
+                // Update mission control cards if they exist
+                updateMissionControlStats(data);
+            })
+            .catch(error => {
+                console.error('Error fetching admin stats:', error);
+                // Remove skeleton class and set fallback values
+                Object.values(statsElements).forEach(el => {
+                    if (el) {
+                        el.classList.remove('skeleton');
+                        el.textContent = '0';
+                    }
+                });
+                document.querySelectorAll('.mission-value').forEach(el => {
+                    el.classList.remove('skeleton');
+                    el.textContent = '0';
+                });
+            });
+    } catch (error) {
+        console.error('Error initializing admin stats:', error);
+    }
+}
+
+function updateMissionControlStats(data) {
+    try {
+        // Update mission control cards with real data
+        const missionLabels = {
+            'users': data.totalUsers || '0',
+            'queue': data.queueSize || '0',
+            'errors': data.errorCount || '0',
+            'retention': data.retentionRate || '0%',
+            'quran-today': data.quranToday || '0',
+            'adhkar': data.adhkarCount || '0',
+            'ai': data.aiUsage || '0',
+            'cpu': data.cpuUsage || '0%'
+        };
+        
+        // Update mission cards if they exist
+        Object.keys(missionLabels).forEach(key => {
+            const elements = document.querySelectorAll(`.mission-label`);
+            elements.forEach(el => {
+                if (el.textContent.toLowerCase().includes(key)) {
+                    const valueEl = el.parentElement.querySelector('.mission-value');
+                    if (valueEl) {
+                        valueEl.classList.remove('skeleton');
+                        valueEl.textContent = missionLabels[key];
+                    }
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error updating mission control stats:', error);
+    }
 }
 
 function initAdminUserManagement() {

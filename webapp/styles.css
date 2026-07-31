@@ -4239,3 +4239,29 @@ input:checked + .slider:before {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 102, 153, 0.4);
 }
+
+/* Loading Skeleton */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+    color: transparent !important;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.mission-value.skeleton {
+    min-width: 60px;
+    height: 20px;
+    display: inline-block;
+}
+
+.stat-value.skeleton {
+    min-width: 80px;
+    height: 24px;
+    display: inline-block;
+}
