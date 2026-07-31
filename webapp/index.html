@@ -67,9 +67,72 @@
                     <div class="card-icon">⏰</div>
                     <h3>الصلاة القادمة</h3>
                     <div class="prayer-info">
-                        <span id="next-prayer-name">العصر</span>
-                        <span id="next-prayer-time">15:30</span>
-                        <span id="prayer-countdown">02:30:00</span>
+                        <span id="next-prayer-name">جاري الحساب...</span>
+                        <span id="next-prayer-time">--:--</span>
+                        <div class="prayer-progress-ring">
+                            <svg class="progress-ring" width="80" height="80">
+                                <circle class="progress-ring-bg" stroke="#e0e0e0" stroke-width="6" fill="transparent" r="35" cx="40" cy="40"/>
+                                <circle class="progress-ring-fill" stroke="#1a5f2a" stroke-width="6" fill="transparent" r="35" cx="40" cy="40" stroke-dasharray="220" stroke-dashoffset="66" stroke-linecap="round"/>
+                            </svg>
+                            <span id="prayer-countdown">--:--:--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card daily-wird">
+                    <div class="card-icon">📖</div>
+                    <h3>الورد اليومي</h3>
+                    <div class="wird-progress">
+                        <div class="wird-item">
+                            <span>القرآن</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <span>3/5 صفحات</span>
+                        </div>
+                        <div class="wird-item">
+                            <span>الأذكار</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                            <span>✅ مكتمل</span>
+                        </div>
+                        <div class="wird-item">
+                            <span>الصلاة</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <span>3/5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mood-selector">
+                    <div class="card-icon">😊</div>
+                    <h3>كيف تشعر اليوم؟</h3>
+                    <div class="mood-chips">
+                        <button class="mood-chip" data-mood="grateful">شاكر</button>
+                        <button class="mood-chip" data-mood="anxious">قلق</button>
+                        <button class="mood-chip" data-mood="sad">حزين</button>
+                        <button class="mood-chip" data-mood="seeking">باحث عن هداية</button>
+                    </div>
+                </div>
+
+                <div class="card streak-tracker">
+                    <div class="card-icon">🔥</div>
+                    <h3>السلسلة المتتالية</h3>
+                    <div class="streak-info">
+                        <span class="streak-number" id="streak-days">7</span>
+                        <span class="streak-label">أيام</span>
+                    </div>
+                    <div class="streak-calendar">
+                        <div class="streak-day completed">أ</div>
+                        <div class="streak-day completed">ث</div>
+                        <div class="streak-day completed">أ</div>
+                        <div class="streak-day completed">خ</div>
+                        <div class="streak-day completed">ج</div>
+                        <div class="streak-day completed">س</div>
+                        <div class="streak-day active">أ</div>
                     </div>
                 </div>
             </div>
@@ -82,7 +145,7 @@
                 <div class="stats-header">
                     <div class="stat-item">
                         <span class="stat-label">الصلاة القادمة</span>
-                        <span class="stat-value" id="dashboard-prayer">العصر - 15:30</span>
+                        <span class="stat-value" id="dashboard-prayer">جاري الحساب...</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">الآية الأخيرة</span>
@@ -130,10 +193,34 @@
                     <p>رفيقك الذكي</p>
                 </div>
 
-                <div class="smart-card favorites-card" data-module="favorites">
-                    <div class="card-icon">❤️</div>
-                    <h3>المفضلة</h3>
-                    <p>المحفوظات</p>
+                <div class="smart-card tasbeeh-card" data-module="tasbeeh">
+                    <div class="card-icon">📿</div>
+                    <h3>المسبحة</h3>
+                    <p>عداد التسبيح</p>
+                </div>
+
+                <div class="smart-card worship-card" data-module="worship">
+                    <div class="card-icon">✅</div>
+                    <h3>العبادات</h3>
+                    <p>متابعة العبادات</p>
+                </div>
+
+                <div class="smart-card challenges-card" data-module="challenges">
+                    <div class="card-icon">🎯</div>
+                    <h3>التحديات</h3>
+                    <p>التحديات اليومية</p>
+                </div>
+
+                <div class="smart-card analytics-card" data-module="analytics">
+                    <div class="card-icon">📊</div>
+                    <h3>الإحصائيات</h3>
+                    <p>تحليلات التقدم</p>
+                </div>
+
+                <div class="smart-card search-card" data-module="search">
+                    <div class="card-icon">🔍</div>
+                    <h3>البحث</h3>
+                    <p>بحث شامل</p>
                 </div>
             </div>
 
@@ -157,29 +244,97 @@
                 <button class="back-btn" data-screen="dashboard">←</button>
                 <h1>القرآن الكريم</h1>
                 <div class="reader-controls">
+                    <button class="mode-toggle" id="mode-toggle">📖</button>
                     <button class="theme-toggle" id="theme-toggle">🌙</button>
                     <button class="font-size" id="font-size">A+</button>
                 </div>
             </div>
 
+            <div class="reader-mode-selector" id="mode-selector">
+                <button class="mode-btn active" data-mode="page">صفحة بصفحة</button>
+                <button class="mode-btn" data-mode="surah">سورة كاملة</button>
+            </div>
+
             <div class="reader-content">
-                <div class="surah-info">
-                    <h2 id="current-surah">سورة البقرة</h2>
-                    <p id="current-page">صفحة 2</p>
+                <!-- Page Mode -->
+                <div class="page-mode" id="page-mode">
+                    <div class="surah-info">
+                        <h2 id="current-surah">سورة البقرة</h2>
+                        <p id="current-page">صفحة 2</p>
+                    </div>
+
+                    <div class="quran-text" id="quran-text">
+                        <!-- Quran content will be loaded here -->
+                    </div>
+
+                    <div class="reader-actions">
+                        <button class="action-btn bookmark-btn" id="bookmark-btn">🔖 حفظ</button>
+                        <button class="action-btn tafseer-btn" id="tafseer-btn">📖 تفسير</button>
+                        <button class="action-btn audio-btn" id="audio-btn">🔊 صوت</button>
+                        <button class="action-btn word-by-word-btn" id="word-by-word-btn">🔤 كلمة بكلمة</button>
+                    </div>
                 </div>
 
-                <div class="quran-text" id="quran-text">
-                    <!-- Quran content will be loaded here -->
+                <!-- Tafseer Overlay -->
+                <div class="tafseer-overlay" id="tafseer-overlay">
+                    <div class="tafseer-header">
+                        <h3>تفسير الآية</h3>
+                        <button class="close-btn" id="close-tafseer">✕</button>
+                    </div>
+                    <div class="tafseer-content">
+                        <div class="tafseer-source">
+                            <span class="source-label">المصدر:</span>
+                            <span class="source-name">تفسير ابن كثير</span>
+                        </div>
+                        <div class="tafseer-text" id="tafseer-text">
+                            <!-- Tafseer content will be loaded here -->
+                        </div>
+                    </div>
                 </div>
 
-                <div class="reader-actions">
-                    <button class="action-btn bookmark-btn" id="bookmark-btn">🔖 حفظ</button>
-                    <button class="action-btn tafseer-btn" id="tafseer-btn">📖 تفسير</button>
-                    <button class="action-btn audio-btn" id="audio-btn">🔊 صوت</button>
+                <!-- Word-by-Word Overlay -->
+                <div class="word-by-word-overlay" id="word-by-word-overlay">
+                    <div class="word-by-word-header">
+                        <h3>تفسير كلمة بكلمة</h3>
+                        <button class="close-btn" id="close-word-by-word">✕</button>
+                    </div>
+                    <div class="word-by-word-content" id="word-by-word-content">
+                        <!-- Word-by-word breakdown will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Surah Mode -->
+                <div class="surah-mode" id="surah-mode" style="display: none;">
+                    <div class="surah-selector">
+                        <select id="surah-select">
+                            <option value="1">سورة الفاتحة</option>
+                            <option value="2" selected>سورة البقرة</option>
+                            <option value="3">سورة آل عمران</option>
+                            <option value="4">سورة النساء</option>
+                            <option value="5">سورة المائدة</option>
+                            <option value="18">سورة الكهف</option>
+                            <option value="36">سورة يس</option>
+                            <option value="55">سورة الرحمن</option>
+                            <option value="67">سورة الملك</option>
+                            <option value="112">سورة الإخلاص</option>
+                            <option value="113">سورة الفلق</option>
+                            <option value="114">سورة الناس</option>
+                        </select>
+                    </div>
+
+                    <div class="surah-content" id="surah-content">
+                        <!-- Surah content will be loaded here -->
+                    </div>
+
+                    <div class="ayah-navigation">
+                        <button class="nav-btn prev-ayah" id="prev-ayah">← الآية السابقة</button>
+                        <span id="ayah-indicator">آية 1 / 286</span>
+                        <button class="nav-btn next-ayah" id="next-ayah">الآية التالية →</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="page-navigation">
+            <div class="page-navigation" id="page-navigation">
                 <button class="nav-btn prev-page" id="prev-page">← السابق</button>
                 <span id="page-indicator">2 / 604</span>
                 <button class="nav-btn next-page" id="next-page">التالي →</button>
@@ -475,11 +630,752 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button class="action-btn">الإعدادات</button>
-                    <button class="action-btn">المساعدة</button>
+                    <button class="action-btn" data-screen="settings">الإعدادات</button>
+                    <button class="action-btn" data-screen="help">المساعدة</button>
+                    <button class="action-btn" data-screen="about">حول التطبيق</button>
                     <button class="action-btn danger">تسجيل الخروج</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Adhkar Center Screen -->
+        <div id="adhkar-center" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>الأذكار</h1>
+            </div>
+
+            <div class="adhkar-content">
+                <div class="adhkar-categories">
+                    <button class="category-btn active" data-category="morning">
+                        <span class="category-icon">🌅</span>
+                        <span class="category-label">أذكار الصباح</span>
+                    </button>
+                    <button class="category-btn" data-category="evening">
+                        <span class="category-icon">🌙</span>
+                        <span class="category-label">أذكار المساء</span>
+                    </button>
+                    <button class="category-btn" data-category="sleep">
+                        <span class="category-icon">😴</span>
+                        <span class="category-label">أذكار النوم</span>
+                    </button>
+                    <button class="category-btn" data-category="travel">
+                        <span class="category-icon">✈️</span>
+                        <span class="category-label">أذكار السفر</span>
+                    </button>
+                    <button class="category-btn" data-category="prayer">
+                        <span class="category-icon">🕌</span>
+                        <span class="category-label">أذكار الصلاة</span>
+                    </button>
+                    <button class="category-btn" data-category="general">
+                        <span class="category-icon">🤲</span>
+                        <span class="category-label">أذكار عامة</span>
+                    </button>
+                </div>
+
+                <div class="adhkar-list" id="adhkar-list">
+                    <!-- Adhkar items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Hadith Center Screen -->
+        <div id="hadith-center" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>الأحاديث</h1>
+            </div>
+
+            <div class="hadith-content">
+                <div class="search-bar">
+                    <input type="text" id="hadith-search" placeholder="ابحث في الأحاديث...">
+                    <button class="search-btn">🔍</button>
+                </div>
+
+                <div class="hadith-collections">
+                    <button class="collection-btn active" data-collection="bukhari">
+                        <span class="collection-name">صحيح البخاري</span>
+                        <span class="collection-count">7563</span>
+                    </button>
+                    <button class="collection-btn" data-collection="muslim">
+                        <span class="collection-name">صحيح مسلم</span>
+                        <span class="collection-count">7490</span>
+                    </button>
+                    <button class="collection-btn" data-collection="tirmidhi">
+                        <span class="collection-name">سنن الترمذي</span>
+                        <span class="collection-count">3890</span>
+                    </button>
+                    <button class="collection-btn" data-collection="abudawud">
+                        <span class="collection-name">سنن أبي داود</span>
+                        <span class="collection-count">5274</span>
+                    </button>
+                </div>
+
+                <div class="hadith-list" id="hadith-list">
+                    <!-- Hadith items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasbeeh Counter Screen -->
+        <div id="tasbeeh-counter" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>المسبحة</h1>
+            </div>
+
+            <div class="tasbeeh-content">
+                <div class="tasbeeh-display">
+                    <div class="tasbeeh-number" id="tasbeeh-count">0</div>
+                    <div class="tasbeeh-target">الهدف: 33</div>
+                </div>
+
+                <div class="tasbeeh-options">
+                    <button class="tasbeeh-option active" data-dhikr="سبحان الله">
+                        سبحان الله
+                    </button>
+                    <button class="tasbeeh-option" data-dhikr="الحمد لله">
+                        الحمد لله
+                    </button>
+                    <button class="tasbeeh-option" data-dhikr="الله أكبر">
+                        الله أكبر
+                    </button>
+                    <button class="tasbeeh-option" data-dhikr="لا إله إلا الله">
+                        لا إله إلا الله
+                    </button>
+                </div>
+
+                <div class="tasbeeh-button" id="tasbeeh-btn">
+                    <span class="tasbeeh-text">اضغط للتسبيح</span>
+                </div>
+
+                <div class="tasbeeh-actions">
+                    <button class="action-btn" id="reset-tasbeeh">إعادة تعيين</button>
+                    <button class="action-btn" id="save-tasbeeh">حفظ</button>
+                </div>
+
+                <div class="tasbeeh-history">
+                    <h3>سجل التسبيح</h3>
+                    <div class="history-list" id="tasbeeh-history">
+                        <!-- History will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Worship Tracker Screen -->
+        <div id="worship-tracker" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>متابعة العبادات</h1>
+            </div>
+
+            <div class="worship-content">
+                <div class="tracker-date">
+                    <button class="date-nav" id="prev-day">←</button>
+                    <span id="tracker-date-display">اليوم</span>
+                    <button class="date-nav" id="next-day">→</button>
+                </div>
+
+                <div class="worship-items">
+                    <div class="worship-item">
+                        <div class="worship-icon">🕌</div>
+                        <div class="worship-info">
+                            <h4>الصلوات الخمس</h4>
+                            <span id="prayer-progress">3/5</span>
+                        </div>
+                        <div class="worship-checkboxes">
+                            <label><input type="checkbox" data-prayer="fajr"> الفجر</label>
+                            <label><input type="checkbox" data-prayer="dhuhr"> الظهر</label>
+                            <label><input type="checkbox" data-prayer="asr"> العصر</label>
+                            <label><input type="checkbox" data-prayer="maghrib"> المغرب</label>
+                            <label><input type="checkbox" data-prayer="isha"> العشاء</label>
+                        </div>
+                    </div>
+
+                    <div class="worship-item">
+                        <div class="worship-icon">📖</div>
+                        <div class="worship-info">
+                            <h4>الورد القرآني</h4>
+                            <span id="quran-progress">5 صفحات</span>
+                        </div>
+                        <input type="number" id="quran-pages" min="0" max="604" placeholder="عدد الصفحات">
+                    </div>
+
+                    <div class="worship-item">
+                        <div class="worship-icon">🤲</div>
+                        <div class="worship-info">
+                            <h4>أذكار الصباح</h4>
+                        </div>
+                        <input type="checkbox" id="morning-adhkar">
+                    </div>
+
+                    <div class="worship-item">
+                        <div class="worship-icon">🌙</div>
+                        <div class="worship-info">
+                            <h4>أذكار المساء</h4>
+                        </div>
+                        <input type="checkbox" id="evening-adhkar">
+                    </div>
+
+                    <div class="worship-item">
+                        <div class="worship-icon">🤲</div>
+                        <div class="worship-info">
+                            <h4>أذكار النوم</h4>
+                        </div>
+                        <input type="checkbox" id="sleep-adhkar">
+                    </div>
+
+                    <div class="worship-item">
+                        <div class="worship-icon">📿</div>
+                        <div class="worship-info">
+                            <h4>التسبيح</h4>
+                            <span id="tasbeeh-count-display">100 تسبيحة</span>
+                        </div>
+                        <input type="number" id="tasbeeh-count-input" min="0" placeholder="عدد التسبيحات">
+                    </div>
+                </div>
+
+                <button class="action-btn" id="save-worship">حفظ التقدم</button>
+            </div>
+        </div>
+
+        <!-- Daily Challenges Screen -->
+        <div id="daily-challenges" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>التحديات اليومية</h1>
+            </div>
+
+            <div class="challenges-content">
+                <div class="challenge-stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="completed-challenges">2</div>
+                        <div class="stat-label">مكتمل اليوم</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="total-challenges">5</div>
+                        <div class="stat-label">إجمالي التحديات</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="challenge-streak">7</div>
+                        <div class="stat-label">أيام متتالية</div>
+                    </div>
+                </div>
+
+                <div class="challenges-list" id="challenges-list">
+                    <div class="challenge-card completed">
+                        <div class="challenge-icon">📖</div>
+                        <div class="challenge-info">
+                            <h4>اقرأ 5 صفحات من القرآن</h4>
+                            <span class="challenge-progress">✅ مكتمل</span>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card completed">
+                        <div class="challenge-icon">🤲</div>
+                        <div class="challenge-info">
+                            <h4>أداء أذكار الصباح</h4>
+                            <span class="challenge-progress">✅ مكتمل</span>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card active">
+                        <div class="challenge-icon">🕌</div>
+                        <div class="challenge-info">
+                            <h4>صل جميع الصلوات في وقتها</h4>
+                            <span class="challenge-progress">3/5</span>
+                        </div>
+                        <div class="challenge-progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📿</div>
+                        <div class="challenge-info">
+                            <h4>سبّح 100 مرة</h4>
+                            <span class="challenge-progress">0/100</span>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📚</div>
+                        <div class="challenge-info">
+                            <h4>اقرأ حديثاً واحداً</h4>
+                            <span class="challenge-progress">⏳ لم يبدأ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorites Screen -->
+        <div id="favorites" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>المفضلة</h1>
+            </div>
+
+            <div class="favorites-content">
+                <div class="favorites-tabs">
+                    <button class="tab-btn active" data-tab="quran">القرآن</button>
+                    <button class="tab-btn" data-tab="hadith">الأحاديث</button>
+                    <button class="tab-btn" data-tab="adhkar">الأذكار</button>
+                </div>
+
+                <div class="favorites-list" id="favorites-list">
+                    <!-- Favorites will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading History Screen -->
+        <div id="reading-history" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>سجل القراءة</h1>
+            </div>
+
+            <div class="history-content">
+                <div class="history-stats">
+                    <div class="stat-box">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">صفحة هذا الأسبوع</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">صفحة اليوم</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">65%</div>
+                        <div class="stat-label">تقدم الختمة</div>
+                    </div>
+                </div>
+
+                <div class="history-chart">
+                    <h3>القراءة الأسبوعية</h3>
+                    <div class="chart-bars">
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 60%"></div>
+                            <span class="bar-label">السبت</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 80%"></div>
+                            <span class="bar-label">الأحد</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 40%"></div>
+                            <span class="bar-label">الإثنين</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 90%"></div>
+                            <span class="bar-label">الثلاثاء</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 70%"></div>
+                            <span class="bar-label">الأربعاء</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 50%"></div>
+                            <span class="bar-label">الخميس</span>
+                        </div>
+                        <div class="chart-bar">
+                            <div class="bar-fill" style="height: 85%"></div>
+                            <span class="bar-label">الجمعة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-list">
+                    <h3>السجل اليومي</h3>
+                    <div class="history-item">
+                        <span class="history-date">اليوم</span>
+                        <span class="history-pages">23 صفحة</span>
+                        <span class="history-surah">البقرة - آل عمران</span>
+                    </div>
+                    <div class="history-item">
+                        <span class="history-date">أمس</span>
+                        <span class="history-pages">18 صفحة</span>
+                        <span class="history-surah">البقرة</span>
+                    </div>
+                    <div class="history-item">
+                        <span class="history-date">الثلثاء</span>
+                        <span class="history-pages">25 صفحة</span>
+                        <span class="history-surah">البقرة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Timeline Screen -->
+        <div id="activity-timeline" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>النشاط</h1>
+            </div>
+
+            <div class="timeline-content">
+                <div class="timeline-filter">
+                    <button class="filter-btn active" data-filter="all">الكل</button>
+                    <button class="filter-btn" data-filter="quran">القرآن</button>
+                    <button class="filter-btn" data-filter="prayer">الصلاة</button>
+                    <button class="filter-btn" data-filter="adhkar">الأذكار</button>
+                </div>
+
+                <div class="timeline-list" id="timeline-list">
+                    <div class="timeline-item">
+                        <div class="timeline-icon">📖</div>
+                        <div class="timeline-content">
+                            <h4>قراءة القرآن</h4>
+                            <p>قرأت 5 صفحات من سورة البقرة</p>
+                            <span class="timeline-time">منذ 2 ساعة</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🕌</div>
+                        <div class="timeline-content">
+                            <h4>صلاة الظهر</h4>
+                            <p>أديت صلاة الظهر في وقتها</p>
+                            <span class="timeline-time">منذ 4 ساعات</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🤲</div>
+                        <div class="timeline-content">
+                            <h4>أذكار الصباح</h4>
+                            <p>أكملت أذكار الصباح</p>
+                            <span class="timeline-time">منذ 6 ساعات</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">📿</div>
+                        <div class="timeline-content">
+                            <h4>التسبيح</h4>
+                            <p>سبّحت 100 مرة</p>
+                            <span class="timeline-time">منذ 8 ساعات</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard Screen -->
+        <div id="analytics" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>الإحصائيات</h1>
+            </div>
+
+            <div class="analytics-content">
+                <div class="analytics-period">
+                    <button class="period-btn active" data-period="week">أسبوع</button>
+                    <button class="period-btn" data-period="month">شهر</button>
+                    <button class="period-btn" data-period="year">سنة</button>
+                </div>
+
+                <div class="analytics-cards">
+                    <div class="analytics-card">
+                        <div class="card-icon">📖</div>
+                        <h3>القرآن</h3>
+                        <div class="analytics-value">156 صفحة</div>
+                        <div class="analytics-change">+12% من الأسبوع الماضي</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-icon">🕌</div>
+                        <h3>الصلاة</h3>
+                        <div class="analytics-value">28/35</div>
+                        <div class="analytics-change">80% إتمام</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-icon">🤲</div>
+                        <h3>الأذكار</h3>
+                        <div class="analytics-value">12/14</div>
+                        <div class="analytics-change">85% إتمام</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="card-icon">📿</div>
+                        <h3>التسبيح</h3>
+                        <div class="analytics-value">1,234</div>
+                        <div class="analytics-change">+234 من الأسبوع الماضي</div>
+                    </div>
+                </div>
+
+                <div class="analytics-chart">
+                    <h3>النشاط اليومي</h3>
+                    <div class="chart-container">
+                        <!-- Chart will be rendered here -->
+                    </div>
+                </div>
+
+                <div class="analytics-achievements">
+                    <h3>الإنجازات</h3>
+                    <div class="achievement-badges">
+                        <div class="achievement-badge">🥉 أول ختمة</div>
+                        <div class="achievement-badge">🥈 30 يوم متتالي</div>
+                        <div class="achievement-badge">🔥 7 أيام متتالية</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="profile">←</button>
+                <h1>الإعدادات</h1>
+            </div>
+
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3>المظهر</h3>
+                    <div class="setting-item">
+                        <label>الوضع الليلي</label>
+                        <div class="toggle-switch" id="dark-mode-toggle">
+                            <input type="checkbox" id="dark-mode">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label>حجم الخط</label>
+                        <select id="font-size-select">
+                            <option value="small">صغير</option>
+                            <option value="medium" selected>متوسط</option>
+                            <option value="large">كبير</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>اللغة</h3>
+                    <div class="setting-item">
+                        <label>لغة التطبيق</label>
+                        <select id="language-select">
+                            <option value="ar" selected>العربية</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>الإشعارات</h3>
+                    <div class="setting-item">
+                        <label>إشعارات الصلاة</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label>إشعارات الأذكار</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label>إشعارات التحديات</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>الصلاة</h3>
+                    <div class="setting-item">
+                        <label>طريقة حساب المواقيت</label>
+                        <select id="prayer-method">
+                            <option value="muslim_world">رابطة العالم الإسلامي</option>
+                            <option value="egypt">المصري العام</option>
+                            <option value="karachi">جامعة كراتشي</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>الموقع</label>
+                        <button class="action-btn" id="location-btn">تحديد الموقع</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>البيانات</h3>
+                    <div class="setting-item">
+                        <button class="action-btn" id="export-data">تصدير البيانات</button>
+                    </div>
+                    <div class="setting-item">
+                        <button class="action-btn" id="import-data">استيراد البيانات</button>
+                    </div>
+                    <div class="setting-item">
+                        <button class="action-btn danger" id="clear-data">مسح البيانات</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Center Screen -->
+        <div id="search-center" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>البحث</h1>
+            </div>
+
+            <div class="search-content">
+                <div class="search-bar-large">
+                    <input type="text" id="global-search" placeholder="ابحث في القرآن، الأحاديث، الأذكار...">
+                    <button class="search-btn-large">🔍</button>
+                </div>
+
+                <div class="search-filters">
+                    <button class="filter-chip active" data-filter="all">الكل</button>
+                    <button class="filter-chip" data-filter="quran">القرآن</button>
+                    <button class="filter-chip" data-filter="hadith">الأحاديث</button>
+                    <button class="filter-chip" data-filter="adhkar">الأذكار</button>
+                </div>
+
+                <div class="search-results" id="search-results">
+                    <div class="search-empty">
+                        <div class="empty-icon">🔍</div>
+                        <p>ابحث عن أي شيء في التطبيق</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Center Screen -->
+        <div id="notifications" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="dashboard">←</button>
+                <h1>الإشعارات</h1>
+            </div>
+
+            <div class="notifications-content">
+                <div class="notification-actions">
+                    <button class="action-btn" id="mark-all-read">تعريف الكل مقروء</button>
+                    <button class="action-btn danger" id="clear-notifications">مسح الكل</button>
+                </div>
+
+                <div class="notifications-list" id="notifications-list">
+                    <div class="notification-item unread">
+                        <div class="notification-icon">🕌</div>
+                        <div class="notification-content">
+                            <h4>تذكير بصلاة العصر</h4>
+                            <p>باقي 15 دقيقة على صلاة العصر</p>
+                            <span class="notification-time">منذ 10 دقائق</span>
+                        </div>
+                    </div>
+                    <div class="notification-item unread">
+                        <div class="notification-icon">🎯</div>
+                        <div class="notification-content">
+                            <h4>تحدي جديد</h4>
+                            <p>تحدي اليوم: اقرأ 5 صفحات من القرآن</p>
+                            <span class="notification-time">منذ ساعة</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">🏆</div>
+                        <div class="notification-content">
+                            <h4>إنجاز جديد!</h4>
+                            <p>أكملت 7 أيام متتالية</p>
+                            <span class="notification-time">منذ يوم</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Screen -->
+        <div id="help" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="profile">←</button>
+                <h1>المساعدة</h1>
+            </div>
+
+            <div class="help-content">
+                <div class="faq-section">
+                    <h3>الأسئلة الشائعة</h3>
+                    <div class="faq-item">
+                        <div class="faq-question">كيف أستخدم التطبيق؟</div>
+                        <div class="faq-answer">يمكنك استخدام التطبيق من خلال القائمة السفلية للتنقل بين الأقسام المختلفة مثل القرآن، الصلاة، الأذكار، وغيرها.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">كيف أحفظ تقدمي؟</div>
+                        <div class="faq-answer">يتم حفظ تقدمك تلقائياً في التطبيق. يمكنك أيضاً تصدير بياناتك من الإعدادات.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">كيف أغير الإعدادات؟</div>
+                        <div class="faq-answer">اذهب إلى الملف الشخصي ثم الإعدادات لتغيير المظهر واللغة والإشعارات.</div>
+                    </div>
+                </div>
+
+                <div class="contact-section">
+                    <h3>تواصل معنا</h3>
+                    <button class="action-btn" id="contact-support">إرسال رسالة دعم</button>
+                    <button class="action-btn" id="report-bug">الإبلاغ عن مشكلة</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Screen -->
+        <div id="about" class="screen">
+            <div class="header">
+                <button class="back-btn" data-screen="profile">←</button>
+                <h1>حول التطبيق</h1>
+            </div>
+
+            <div class="about-content">
+                <div class="app-info">
+                    <div class="app-logo">🕌</div>
+                    <h2>رفيق</h2>
+                    <p class="app-version">الإصدار 1.0.0</p>
+                    <p class="app-description">مساعدك الإسلامي الشامل للقرآن، الصلاة، الأذكار، والمزيد</p>
+                </div>
+
+                <div class="app-features">
+                    <h3>المميزات</h3>
+                    <ul>
+                        <li>✅ قراءة القرآن الكريم</li>
+                        <li>✅ مواقيت الصلاة والقبلة</li>
+                        <li>✅ الأذكار اليومية</li>
+                        <li>✅ الأحاديث النبوية</li>
+                        <li>✅ المساعد الذكي الإسلامي</li>
+                        <li>✅ متابعة العبادات</li>
+                        <li>✅ التحديات اليومية</li>
+                        <li>✅ الإحصائيات والإنجازات</li>
+                    </ul>
+                </div>
+
+                <div class="app-actions">
+                    <button class="action-btn" id="rate-app">تقييم التطبيق</button>
+                    <button class="action-btn" id="share-app">مشاركة التطبيق</button>
+                    <button class="action-btn" id="privacy-policy">سياسة الخصوصية</button>
+                    <button class="action-btn" id="terms">الشروط والأحكام</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Audio Player Dock -->
+        <div class="audio-player-dock" id="audio-dock">
+            <div class="audio-info">
+                <div class="audio-icon">🎵</div>
+                <div class="audio-details">
+                    <span class="audio-title" id="audio-title">سورة الفاتحة</span>
+                    <span class="audio-reciter" id="audio-reciter">مشاري العفاسي</span>
+                </div>
+            </div>
+            <div class="audio-controls">
+                <button class="audio-btn" id="prev-btn">⏮️</button>
+                <button class="audio-btn play-btn" id="play-pause-btn">▶️</button>
+                <button class="audio-btn" id="next-btn">⏭️</button>
+            </div>
+            <div class="audio-progress">
+                <span class="audio-time" id="audio-current">0:00</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="audio-progress" style="width: 0%"></div>
+                </div>
+                <span class="audio-time" id="audio-duration">0:38</span>
+            </div>
+            <button class="audio-close" id="close-audio">✕</button>
         </div>
 
         <!-- Bottom Navigation -->
