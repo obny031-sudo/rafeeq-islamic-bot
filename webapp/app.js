@@ -1,5 +1,18 @@
 // Rafeeq Telegram Mini App - Main JavaScript
 
+// Custom debug console
+function debugLog(message) {
+    const debugConsole = document.getElementById('debug-console');
+    if (debugConsole) {
+        debugConsole.style.display = 'block';
+        const logEntry = document.createElement('div');
+        logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        debugConsole.appendChild(logEntry);
+        debugConsole.scrollTop = debugConsole.scrollHeight;
+    }
+    console.log(message);
+}
+
 // Initialize Telegram WebApp with fallback for browser testing
 let tg = window.Telegram?.WebApp || {
     expand: () => {},
@@ -8,13 +21,15 @@ let tg = window.Telegram?.WebApp || {
     BackButton: {
         show: () => {},
         hide: () => {},
-        onClick: () => {}
+        onClick: () => {},
+        offClick: () => {}
     },
     MainButton: {
         setText: () => {},
         show: () => {},
         hide: () => {},
-        onClick: () => {}
+        onClick: () => {},
+        offClick: () => {}
     },
     HapticFeedback: {
         impactOccurred: () => {},
@@ -29,21 +44,92 @@ let tg = window.Telegram?.WebApp || {
     initDataUnsafe: { user: null }
 };
 
+// Safe Telegram API calls
+function safeHapticFeedback(type = 'light') {
+    try {
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(type);
+        }
+    } catch (error) {
+        // Silently ignore haptic feedback errors
+    }
+}
+
+function safeShowAlert(message) {
+    try {
+        if (tg && tg.showAlert) {
+            tg.showAlert(message);
+        } else {
+            alert(message);
+        }
+    } catch (error) {
+        alert(message);
+    }
+}
+
+function safeShowConfirm(message, callback) {
+    try {
+        if (tg && tg.showConfirm) {
+            tg.showConfirm(message, callback);
+        } else {
+            if (confirm(message)) callback(true);
+        }
+    } catch (error) {
+        if (confirm(message)) callback(true);
+    }
+}
+
 // Initialize app when ready
 document.addEventListener('DOMContentLoaded', function() {
     try {
+        debugLog('App starting...');
+        
         // Initialize Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
+            debugLog('Telegram WebApp initialized');
         }
         
-        // Initialize offline data caching
-        initOfflineCache();
+        // GLOBAL DELEGATED EVENT LISTENER FOR NAVIGATION
+        document.addEventListener('click', (e) => {
+            // Find closest clickable target with data-screen attribute
+            const targetBtn = e.target.closest('[data-screen]');
+            if (targetBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const screenId = targetBtn.getAttribute('data-screen');
+                debugLog('Delegated click to screen: ' + screenId);
+                try {
+                    navigateToScreen(screenId);
+                } catch (err) {
+                    debugLog('ERROR navigating to screen: ' + err.message);
+                    console.error(`[Navigation Error] Failed to open ${screenId}:`, err);
+                }
+                return;
+            }
+            
+            // Find closest clickable target with data-module attribute
+            const targetModule = e.target.closest('[data-module]');
+            if (targetModule) {
+                e.preventDefault();
+                e.stopPropagation();
+                const moduleId = targetModule.getAttribute('data-module');
+                debugLog('Delegated click to module: ' + moduleId);
+                try {
+                    navigateToModule(moduleId);
+                } catch (err) {
+                    debugLog('ERROR navigating to module: ' + err.message);
+                    console.error(`[Navigation Error] Failed to open module ${moduleId}:`, err);
+                }
+                return;
+            }
+        });
         
-        initTelegramWebApp();
-        initNavigation();
+        debugLog('Global delegated event listener installed');
+        
+        // Initialize all modules
         initDailyHub();
         initDashboard();
         initQuranReader();
@@ -68,7 +154,11 @@ document.addEventListener('DOMContentLoaded', function() {
         initHelp();
         initAbout();
         initAudioPlayer();
+        initAdminDashboard();
+        
+        debugLog('All modules initialized');
     } catch (error) {
+        debugLog('ERROR initializing app: ' + error.message);
         console.error('Initialization error:', error);
     } finally {
         // GUARANTEED: Hide loading screen regardless of errors
@@ -83,6 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dailyHub) {
             dailyHub.classList.add('active');
         }
+        
+        debugLog('App initialization complete');
     }
 });
 
@@ -730,6 +822,19 @@ function initReaderModeToggle() {
 
 function initSurahMode() {
     try {
+        debugLog('Initializing surah mode...');
+        
+        // Load surah list from quran.json
+        loadSurahList();
+        
+        // Initialize search functionality
+        const surahSearch = document.getElementById('surah-search');
+        if (surahSearch) {
+            surahSearch.addEventListener('input', function() {
+                filterSurahs(this.value);
+            });
+        }
+        
         const surahSelect = document.getElementById('surah-select');
         if (surahSelect) {
             surahSelect.addEventListener('change', function() {
@@ -749,106 +854,205 @@ function initSurahMode() {
         }
         
         // Load initial surah
-        loadSurah(2);
+        loadSurah(1);
+        
+        debugLog('Surah mode initialized successfully');
     } catch (error) {
+        debugLog('ERROR in initSurahMode: ' + error.message);
         console.error('Error initializing surah mode:', error);
     }
 }
 
+let quranData = null;
+
+async function loadSurahList() {
+    try {
+        debugLog('Loading surah list...');
+        
+        const response = await fetch('assets/data/quran.json');
+        quranData = await response.json();
+        
+        const surahSelect = document.getElementById('surah-select');
+        if (surahSelect && quranData) {
+            surahSelect.innerHTML = '';
+            
+            quranData.forEach(surah => {
+                const option = document.createElement('option');
+                option.value = surah.id;
+                option.textContent = `${surah.id}. ${surah.name}`;
+                surahSelect.appendChild(option);
+            });
+            
+            debugLog('Surah list loaded successfully: ' + quranData.length + ' surahs');
+        }
+    } catch (error) {
+        debugLog('ERROR loading surah list: ' + error.message);
+        console.error('Error loading surah list:', error);
+        
+        // Fallback to hardcoded list
+        loadFallbackSurahList();
+    }
+}
+
+function loadFallbackSurahList() {
+    debugLog('Loading fallback surah list...');
+    
+    const surahNames = {
+        1: 'سورة الفاتحة',
+        2: 'سورة البقرة',
+        3: 'سورة آل عمران',
+        4: 'سورة النساء',
+        5: 'سورة المائدة',
+        6: 'سورة الأنعام',
+        7: 'سورة الأعراف',
+        8: 'سورة الأنفال',
+        9: 'سورة التوبة',
+        10: 'سورة يونس',
+        11: 'سورة هود',
+        12: 'سورة يوسف',
+        13: 'سورة الرعد',
+        14: 'سورة إبراهيم',
+        15: 'سورة الحجر',
+        16: 'سورة النحل',
+        17: 'سورة الإسراء',
+        18: 'سورة الكهف',
+        19: 'سورة مريم',
+        20: 'سورة طه',
+        36: 'سورة يس',
+        55: 'سورة الرحمن',
+        67: 'سورة الملك',
+        112: 'سورة الإخلاص',
+        113: 'سورة الفلق',
+        114: 'سورة الناس'
+    };
+    
+    const surahSelect = document.getElementById('surah-select');
+    if (surahSelect) {
+        surahSelect.innerHTML = '';
+        
+        Object.keys(surahNames).sort((a, b) => a - b).forEach(id => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = surahNames[id];
+            surahSelect.appendChild(option);
+        });
+        
+        debugLog('Fallback surah list loaded');
+    }
+}
+
+function filterSurahs(searchTerm) {
+    try {
+        const surahSelect = document.getElementById('surah-select');
+        if (!surahSelect) return;
+        
+        const options = surahSelect.querySelectorAll('option');
+        const term = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const text = option.textContent.toLowerCase();
+            option.style.display = text.includes(term) ? 'block' : 'none';
+        });
+    } catch (error) {
+        debugLog('ERROR filtering surahs: ' + error.message);
+        console.error('Error filtering surahs:', error);
+    }
+}
+
 let currentAyah = 1;
-let totalAyahs = 286;
+let totalAyahs = 7;
+let currentSurahId = 1;
 
 function loadSurah(surahId) {
     try {
-        const surahNames = {
-            1: 'الفاتحة',
-            2: 'البقرة',
-            3: 'آل عمران',
-            4: 'النساء',
-            5: 'المائدة',
-            18: 'الكهف',
-            36: 'يس',
-            55: 'الرحمن',
-            67: 'الملك',
-            112: 'الإخلاص',
-            113: 'الفلق',
-            114: 'الناس'
-        };
+        debugLog('Loading surah: ' + surahId);
+        currentSurahId = parseInt(surahId);
         
-        const surahAyahs = {
-            1: 7,
-            2: 286,
-            3: 200,
-            4: 176,
-            5: 120,
-            18: 110,
-            36: 83,
-            55: 78,
-            67: 30,
-            112: 4,
-            113: 5,
-            114: 6
-        };
+        let surahData = null;
         
-        totalAyahs = surahAyahs[surahId] || 1;
+        // Try to load from quranData first
+        if (quranData) {
+            surahData = quranData.find(s => s.id === currentSurahId);
+        }
+        
+        // Fallback to hardcoded data
+        if (!surahData) {
+            const surahNames = {
+                1: 'الفاتحة',
+                2: 'البقرة',
+                3: 'آل عمران',
+                4: 'النساء',
+                5: 'المائدة',
+                18: 'الكهف',
+                36: 'يس',
+                55: 'الرحمن',
+                67: 'الملك',
+                112: 'الإخلاص',
+                113: 'الفلق',
+                114: 'الناس'
+            };
+            
+            const surahAyahs = {
+                1: 7,
+                2: 286,
+                3: 200,
+                4: 176,
+                5: 120,
+                18: 110,
+                36: 83,
+                55: 78,
+                67: 30,
+                112: 4,
+                113: 5,
+                114: 6
+            };
+            
+            surahData = {
+                id: currentSurahId,
+                name: surahNames[currentSurahId] || 'سورة ' + currentSurahId,
+                total_verses: surahAyahs[currentSurahId] || 100,
+                verses: []
+            };
+        }
+        
+        // Update surah info
+        const surahInfo = document.querySelector('.surah-info h2');
+        if (surahInfo) {
+            surahInfo.textContent = surahData.name;
+        }
+        
+        // Reset ayah navigation
         currentAyah = 1;
+        totalAyahs = surahData.total_verses;
         
+        // Display surah content
         const surahContent = document.getElementById('surah-content');
-        if (surahContent) {
-            surahContent.innerHTML = `
-                <h3>سورة ${surahNames[surahId]}</h3>
-                <p>بسم الله الرحمن الرحيم</p>
-                <div class="ayah-text">
-                    <span class="ayah-number">1</span>
-                    <span class="ayah-content">آية تجريبية من السورة المختارة</span>
-                </div>
-            `;
+        if (surahContent && surahData.verses && surahData.verses.length > 0) {
+            surahContent.innerHTML = '';
+            
+            surahData.verses.forEach((ayah, index) => {
+                const ayahDiv = document.createElement('div');
+                ayahDiv.className = 'ayah-text';
+                ayahDiv.innerHTML = `
+                    <span class="ayah-number">${ayah.id}</span>
+                    <span class="ayah-content">${ayah.text}</span>
+                `;
+                surahContent.appendChild(ayahDiv);
+            });
+            
+            debugLog('Surah loaded successfully: ' + surahData.name + ' (' + surahData.verses.length + ' verses)');
+        } else {
+            surahContent.innerHTML = '<p class="placeholder">جاري تحميل السورة...</p>';
+            debugLog('Surah verses not available, showing placeholder');
         }
         
+        // Update ayah indicator
         updateAyahIndicator();
+        
+        safeHapticFeedback('light');
     } catch (error) {
+        debugLog('ERROR loading surah: ' + error.message);
         console.error('Error loading surah:', error);
-    }
-}
-
-function navigateToPreviousAyah() {
-    try {
-        if (currentAyah > 1) {
-            currentAyah--;
-            updateAyahContent();
-            updateAyahIndicator();
-            tg.HapticFeedback.impactOccurred('light');
-        }
-    } catch (error) {
-        console.error('Error navigating to previous ayah:', error);
-    }
-}
-
-function navigateToNextAyah() {
-    try {
-        if (currentAyah < totalAyahs) {
-            currentAyah++;
-            updateAyahContent();
-            updateAyahIndicator();
-            tg.HapticFeedback.impactOccurred('light');
-        }
-    } catch (error) {
-        console.error('Error navigating to next ayah:', error);
-    }
-}
-
-function updateAyahContent() {
-    try {
-        const surahContent = document.getElementById('surah-content');
-        if (surahContent) {
-            const ayahElement = surahContent.querySelector('.ayah-text');
-            if (ayahElement) {
-                ayahElement.querySelector('.ayah-number').textContent = currentAyah;
-                ayahElement.querySelector('.ayah-content').textContent = `آية ${currentAyah} من السورة المختارة`;
-            }
-        }
-    } catch (error) {
-        console.error('Error updating ayah content:', error);
     }
 }
 
@@ -859,44 +1063,109 @@ function updateAyahIndicator() {
             indicator.textContent = `آية ${currentAyah} / ${totalAyahs}`;
         }
     } catch (error) {
+        debugLog('ERROR updating ayah indicator: ' + error.message);
         console.error('Error updating ayah indicator:', error);
     }
 }
 
+function navigateToPreviousAyah() {
+    if (currentAyah > 1) {
+        currentAyah--;
+        updateAyahIndicator();
+        scrollToAyah(currentAyah);
+        safeHapticFeedback('light');
+    }
+}
+
+function navigateToNextAyah() {
+    if (currentAyah < totalAyahs) {
+        currentAyah++;
+        updateAyahIndicator();
+        scrollToAyah(currentAyah);
+        safeHapticFeedback('light');
+    }
+}
+
+function scrollToAyah(ayahNumber) {
+    const ayahElements = document.querySelectorAll('.ayah-text');
+    if (ayahElements[ayahNumber - 1]) {
+        ayahElements[ayahNumber - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
 function initThemeToggle() {
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', function() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        this.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-        
-        tg.HapticFeedback.impactOccurred('light');
-    });
+    try {
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                this.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                safeHapticFeedback('light');
+            });
+        }
+    } catch (error) {
+        debugLog('ERROR in initThemeToggle: ' + error.message);
+        console.error('Error initializing theme toggle:', error);
+    }
 }
 
 function initFontSizeControl() {
-    const fontSizeBtn = document.getElementById('font-size');
-    let currentSize = 1.3;
-    
-    fontSizeBtn.addEventListener('click', function() {
-        currentSize = currentSize >= 1.8 ? 1.1 : currentSize + 0.1;
-        document.getElementById('quran-text').style.fontSize = `${currentSize}rem`;
-        
-        tg.HapticFeedback.impactOccurred('light');
-    });
+    try {
+        const fontSizeBtn = document.getElementById('font-size');
+        if (fontSizeBtn) {
+            let currentSize = 1.3;
+            
+            fontSizeBtn.addEventListener('click', function() {
+                currentSize = currentSize >= 1.8 ? 1.1 : currentSize + 0.1;
+                const quranText = document.getElementById('quran-text');
+                if (quranText) {
+                    quranText.style.fontSize = `${currentSize}rem`;
+                }
+                safeHapticFeedback('light');
+            });
+        }
+    } catch (error) {
+        debugLog('ERROR in initFontSizeControl: ' + error.message);
+        console.error('Error initializing font size control:', error);
+    }
 }
 
+// Page Navigation
+let currentPage = 1;
+const totalPages = 604;
+
 function initPageNavigation() {
-    document.getElementById('prev-page').addEventListener('click', function() {
-        // Navigate to previous page
-        tg.HapticFeedback.impactOccurred('light');
-    });
-    
-    document.getElementById('next-page').addEventListener('click', function() {
-        // Navigate to next page
-        tg.HapticFeedback.impactOccurred('light');
-    });
+    try {
+        const prevPageBtn = document.getElementById('prev-page');
+        const nextPageBtn = document.getElementById('next-page');
+        
+        if (prevPageBtn) {
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadQuranPage(currentPage);
+                    safeHapticFeedback('light');
+                }
+            });
+        }
+        
+        if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadQuranPage(currentPage);
+                    safeHapticFeedback('light');
+                }
+            });
+        }
+        
+        debugLog('Page navigation initialized successfully');
+    } catch (error) {
+        debugLog('ERROR in initPageNavigation: ' + error.message);
+        console.error('Error initializing page navigation:', error);
+    }
 }
 
 function initReaderActions() {
@@ -1090,19 +1359,70 @@ function hideWordByWordOverlay() {
 }
 
 function loadQuranPage(pageNumber) {
-    // In production, this would fetch from API
-    const quranText = `
-        بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+    try {
+        debugLog('Loading page: ' + pageNumber);
         
-        الم
-        ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ
-        الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ
-        وَالَّذِينَ يُؤْمِنُونَ بِمَا أُنزِلَ إِلَيْكَ وَمَا أُنزِلَ مِن قَبْلِكَ وَبِالْآخِرَةِ هُمْ يُوقِنُونَ
-    `;
-    
-    document.getElementById('quran-text').textContent = quranText;
-    document.getElementById('current-page').textContent = `صفحة ${pageNumber}`;
-    document.getElementById('page-indicator').textContent = `${pageNumber} / 604`;
+        // Update page indicator
+        const pageIndicatorEl = document.getElementById('page-indicator');
+        if (pageIndicatorEl) pageIndicatorEl.textContent = `صفحة ${pageNumber} / ${totalPages}`;
+        
+        const currentPageEl = document.getElementById('current-page');
+        if (currentPageEl) currentPageEl.textContent = `صفحة ${pageNumber}`;
+        
+        // Get quran text container
+        const quranTextEl = document.getElementById('quran-text');
+        if (!quranTextEl) {
+            debugLog('ERROR: quran-text element not found');
+            return;
+        }
+        
+        // Clear existing content
+        quranTextEl.innerHTML = '';
+        
+        // Try to load from quranData
+        if (quranData && quranData.length > 0) {
+            // Calculate which surah to show based on page number
+            // This is a simplified mapping - in production, you'd use proper page-to-surah mapping
+            const surahIndex = Math.min(Math.floor((pageNumber - 1) / 5), quranData.length - 1);
+            const surah = quranData[surahIndex];
+            
+            if (surah && surah.verses && surah.verses.length > 0) {
+                // Update surah name header
+                const surahInfo = document.querySelector('.surah-info h2');
+                if (surahInfo) surahInfo.textContent = surah.name;
+                
+                // Display verses
+                surah.verses.forEach((ayah, index) => {
+                    const ayahDiv = document.createElement('div');
+                    ayahDiv.className = 'ayah-text';
+                    ayahDiv.innerHTML = `
+                        <span class="ayah-number">${ayah.id}</span>
+                        <span class="ayah-content">${ayah.text}</span>
+                    `;
+                    quranTextEl.appendChild(ayahDiv);
+                });
+                
+                debugLog('Loaded surah: ' + surah.name + ' for page ' + pageNumber);
+            } else {
+                quranTextEl.innerHTML = '<p class="placeholder">جاري تحميل الصفحة...</p>';
+                debugLog('No verses found for page ' + pageNumber);
+            }
+        } else {
+            // Fallback to placeholder
+            quranTextEl.innerHTML = `
+                <div class="page-placeholder">
+                    <p>صفحة ${pageNumber}</p>
+                    <p>جاري تحميل محتوى الصفحة...</p>
+                </div>
+            `;
+            debugLog('quranData not available, showing placeholder');
+        }
+        
+        safeHapticFeedback('light');
+    } catch (error) {
+        debugLog('ERROR loading page: ' + error.message);
+        console.error('Error loading page:', error);
+    }
 }
 
 // Khatma Dashboard Module
@@ -1527,48 +1847,100 @@ function initProfile() {
 }
 
 function loadProfileData() {
-    // In production, this would fetch from API
-    const profileData = {
-        name: tg.initDataUnsafe?.user?.first_name || 'المستخدم',
-        lastSurah: 'البقرة',
-        lastDhikr: 'سبحان الله',
-        streak: '7 أيام',
-        badges: '2 شارات'
-    };
-    
-    document.getElementById('user-name').textContent = profileData.name;
-    document.getElementById('profile-last-surah').textContent = profileData.lastSurah;
-    document.getElementById('profile-last-dhikr').textContent = profileData.lastDhikr;
-    document.getElementById('profile-streak').textContent = profileData.streak;
-    document.getElementById('profile-badges').textContent = profileData.badges;
-    
-    // Set avatar
-    if (tg.initDataUnsafe?.user?.photo_url) {
-        document.getElementById('user-avatar').style.backgroundImage = `url(${tg.initDataUnsafe.user.photo_url})`;
-        document.getElementById('user-avatar').style.backgroundSize = 'cover';
-        document.getElementById('user-avatar').textContent = '';
+    try {
+        debugLog('Loading profile data...');
+        
+        // Get user data from Telegram WebApp SDK
+        const telegramUser = tg.initDataUnsafe?.user;
+        
+        // Admin user IDs (in production, fetch from backend API)
+        const adminUserIds = [123456789, 987654321]; // Replace with actual admin IDs
+        
+        // Check if user is admin
+        const isAdmin = telegramUser && adminUserIds.includes(telegramUser.id);
+        
+        debugLog('User is admin: ' + isAdmin);
+        
+        // Show/hide admin section
+        const adminSection = document.getElementById('admin-section');
+        if (adminSection) {
+            adminSection.style.display = isAdmin ? 'block' : 'none';
+            debugLog('Admin section visibility set to: ' + (isAdmin ? 'visible' : 'hidden'));
+        }
+        
+        // Show/hide admin nav button
+        const adminNavBtn = document.querySelector('.nav-btn.admin-only');
+        if (adminNavBtn) {
+            adminNavBtn.style.display = isAdmin ? 'flex' : 'none';
+            debugLog('Admin nav button visibility set to: ' + (isAdmin ? 'visible' : 'hidden'));
+        }
+        
+        // Load profile data
+        const profileData = {
+            name: telegramUser?.first_name || 'المستخدم',
+            username: telegramUser?.username ? '@' + telegramUser.username : '',
+            userId: telegramUser?.id ? 'ID: ' + telegramUser.id : 'ID: 123456789',
+            lastSurah: 'البقرة',
+            lastDhikr: 'سبحان الله',
+            streak: '7 أيام',
+            khatmas: '2 ختمات',
+            tasbeeh: '1,234',
+            badges: '2 شارات'
+        };
+        
+        // Update profile UI with null checks
+        const userNameEl = document.getElementById('user-name');
+        if (userNameEl) userNameEl.textContent = profileData.name;
+        
+        const userUsernameEl = document.getElementById('user-username');
+        if (userUsernameEl) userUsernameEl.textContent = profileData.username;
+        
+        const userIdEl = document.getElementById('user-id');
+        if (userIdEl) userIdEl.textContent = profileData.userId;
+        
+        const profileStreakEl = document.getElementById('profile-streak');
+        if (profileStreakEl) profileStreakEl.textContent = profileData.streak;
+        
+        const profileKhatmasEl = document.getElementById('profile-khatmas');
+        if (profileKhatmasEl) profileKhatmasEl.textContent = profileData.khatmas;
+        
+        const profileTasbeehEl = document.getElementById('profile-tasbeeh');
+        if (profileTasbeehEl) profileTasbeehEl.textContent = profileData.tasbeeh;
+        
+        const profileBadgesEl = document.getElementById('profile-badges');
+        if (profileBadgesEl) profileBadgesEl.textContent = profileData.badges;
+        
+        debugLog('Profile data loaded successfully');
+    } catch (error) {
+        debugLog('ERROR loading profile data: ' + error.message);
+        console.error('Error loading profile data:', error);
     }
 }
 
 function initProfileActions() {
-    document.querySelectorAll('.profile-actions .action-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const screen = this.dataset.screen;
-            const action = this.textContent;
-            
-            if (screen) {
-                navigateToScreen(screen);
-            } else if (action === 'تسجيل الخروج') {
-                tg.showConfirm('هل أنت متأكد من تسجيل الخروج؟', (confirmed) => {
-                    if (confirmed) {
-                        tg.close();
-                    }
-                });
-            }
-            
-            tg.HapticFeedback.impactOccurred('light');
+    try {
+        document.querySelectorAll('.profile-actions .action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const screen = this.dataset.screen;
+                const action = this.textContent;
+                
+                if (screen) {
+                    navigateToScreen(screen);
+                } else if (action === 'تسجيل الخروج') {
+                    safeShowConfirm('هل أنت متأكد من تسجيل الخروج؟', (confirmed) => {
+                        if (confirmed) {
+                            tg.close();
+                        }
+                    });
+                }
+                
+                safeHapticFeedback('light');
+            });
         });
-    });
+    } catch (error) {
+        debugLog('ERROR in initProfileActions: ' + error.message);
+        console.error('Error initializing profile actions:', error);
+    }
 }
 
 // Utility Functions
@@ -2170,7 +2542,13 @@ function initSettings() {
         
         const locationBtn = document.getElementById('location-btn');
         if (locationBtn) {
-            locationBtn.addEventListener('click', requestLocation);
+            locationBtn.addEventListener('click', function() {
+                if (typeof requestLocation === 'function') {
+                    requestLocation();
+                } else {
+                    debugLog('requestLocation function not defined');
+                }
+            });
         }
         
         // Data export/import

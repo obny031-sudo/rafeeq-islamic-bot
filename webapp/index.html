@@ -8,6 +8,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div id="debug-console" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 10px; font-size: 12px; z-index: 10000; max-height: 200px; overflow-y: auto; display: none; pointer-events: none;"></div>
     <div id="app">
         <!-- Loading Screen -->
         <div id="loading-screen" class="screen active">
@@ -142,6 +143,9 @@
         <div id="dashboard" class="screen">
             <div class="header">
                 <h1>الرئيسية</h1>
+                <a href="https://t.me/o_w_i" target="_blank" class="telegram-link">
+                    <span class="telegram-icon">✈️</span>
+                </a>
                 <div class="stats-header">
                     <div class="stat-item">
                         <span class="stat-label">الصلاة القادمة</span>
@@ -306,19 +310,9 @@
                 <!-- Surah Mode -->
                 <div class="surah-mode" id="surah-mode" style="display: none;">
                     <div class="surah-selector">
-                        <select id="surah-select">
-                            <option value="1">سورة الفاتحة</option>
-                            <option value="2" selected>سورة البقرة</option>
-                            <option value="3">سورة آل عمران</option>
-                            <option value="4">سورة النساء</option>
-                            <option value="5">سورة المائدة</option>
-                            <option value="18">سورة الكهف</option>
-                            <option value="36">سورة يس</option>
-                            <option value="55">سورة الرحمن</option>
-                            <option value="67">سورة الملك</option>
-                            <option value="112">سورة الإخلاص</option>
-                            <option value="113">سورة الفلق</option>
-                            <option value="114">سورة الناس</option>
+                        <input type="text" id="surah-search" placeholder="ابحث عن سورة..." class="surah-search-input">
+                        <select id="surah-select" class="surah-select-dropdown">
+                            <!-- Surahs will be loaded dynamically -->
                         </select>
                     </div>
 
@@ -336,7 +330,7 @@
 
             <div class="page-navigation" id="page-navigation">
                 <button class="nav-btn prev-page" id="prev-page">← السابق</button>
-                <span id="page-indicator">2 / 604</span>
+                <span id="page-indicator">صفحة 1 / 604</span>
                 <button class="nav-btn next-page" id="next-page">التالي →</button>
             </div>
         </div>
@@ -607,26 +601,48 @@
                 <div class="profile-header">
                     <div class="avatar" id="user-avatar">👤</div>
                     <h2 id="user-name">المستخدم</h2>
+                    <p id="user-username">@username</p>
+                    <p id="user-id">ID: 123456789</p>
                     <p id="user-status">عضو نشط</p>
                 </div>
 
                 <div class="profile-stats">
                     <div class="profile-stat">
-                        <span class="stat-label">السورة الأخيرة</span>
-                        <span class="stat-value" id="profile-last-surah">البقرة</span>
+                        <span class="stat-icon">🔥</span>
+                        <div class="stat-info">
+                            <span class="stat-label">السلسلة الحالية</span>
+                            <span class="stat-value" id="profile-streak">7 أيام</span>
+                        </div>
                     </div>
                     <div class="profile-stat">
-                        <span class="stat-label">الذكر الأخير</span>
-                        <span class="stat-value" id="profile-last-dhikr">سبحان الله</span>
+                        <span class="stat-icon">📖</span>
+                        <div class="stat-info">
+                            <span class="stat-label">الختمات المكتملة</span>
+                            <span class="stat-value" id="profile-khatmas">2 ختمات</span>
+                        </div>
                     </div>
                     <div class="profile-stat">
-                        <span class="stat-label">السلسلة الحالية</span>
-                        <span class="stat-value" id="profile-streak">7 أيام</span>
+                        <span class="stat-icon">📿</span>
+                        <div class="stat-info">
+                            <span class="stat-label">إجمالي التسبيح</span>
+                            <span class="stat-value" id="profile-tasbeeh">1,234</span>
+                        </div>
                     </div>
                     <div class="profile-stat">
-                        <span class="stat-label">الشارات</span>
-                        <span class="stat-value" id="profile-badges">2 شارات</span>
+                        <span class="stat-icon">🏆</span>
+                        <div class="stat-info">
+                            <span class="stat-label">الشارات</span>
+                            <span class="stat-value" id="profile-badges">2 شارات</span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Admin Dashboard Button - Only visible for admin users -->
+                <div class="admin-section" id="admin-section" style="display: none;">
+                    <button class="admin-dashboard-btn" data-screen="admin-dashboard">
+                        <span class="admin-icon">⚙️</span>
+                        <span class="admin-label">لوحة الأدمن</span>
+                    </button>
                 </div>
 
                 <div class="profile-actions">
@@ -1310,7 +1326,10 @@
 
                 <div class="contact-section">
                     <h3>تواصل معنا</h3>
-                    <button class="action-btn" id="contact-support">إرسال رسالة دعم</button>
+                    <a href="https://t.me/o_w_i" target="_blank" class="action-btn telegram-contact-btn">
+                        <span>✈️</span>
+                        <span>تواصل عبر تليجرام</span>
+                    </a>
                     <button class="action-btn" id="report-bug">الإبلاغ عن مشكلة</button>
                 </div>
             </div>
@@ -1443,58 +1462,739 @@
 
         <!-- Admin Dashboard Screen -->
         <div id="admin-dashboard" class="screen">
-            <div class="header">
-                <button class="back-btn" id="back-from-admin">←</button>
-                <h1>لوحة التحكم</h1>
-            </div>
-            
-            <div class="admin-stats">
-                <div class="stat-card">
-                    <span class="stat-icon">👥</span>
-                    <span class="stat-label">المستخدمين</span>
-                    <span class="stat-value" id="total-users">0</span>
+            <!-- Mission Control Main Page -->
+            <div id="mission-control" class="mission-control">
+                <div class="mission-header">
+                    <h1>🚀 Mission Control</h1>
+                    <div class="mission-status">
+                        <span class="status-indicator online"></span>
+                        <span class="status-text">All Systems Operational</span>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-icon">💎</span>
-                    <span class="stat-label">النقاط الموزعة</span>
-                    <span class="stat-value" id="total-points">0</span>
+
+                <!-- System Status Grid -->
+                <div class="mission-grid">
+                    <div class="mission-card">
+                        <div class="mission-icon">🟢</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Bot Status</span>
+                            <span class="mission-value">99.99%</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 99.99%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">👥</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Users</span>
+                            <span class="mission-value">14,522</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">📨</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Queue</span>
+                            <span class="mission-value">32</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress warning" style="width: 15%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">⚠</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Errors</span>
+                            <span class="mission-value">0</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress success" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">❤️</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Retention</span>
+                            <span class="mission-value">84%</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">📖</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Quran Today</span>
+                            <span class="mission-value">8,212</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 56%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">🤲</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Adhkar</span>
+                            <span class="mission-value">5,322</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 37%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">🤖</div>
+                        <div class="mission-info">
+                            <span class="mission-label">AI</span>
+                            <span class="mission-value">2,194</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 15%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">🔥</div>
+                        <div class="mission-info">
+                            <span class="mission-label">CPU</span>
+                            <span class="mission-value">18%</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress" style="width: 18%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">🧠</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Redis</span>
+                            <span class="mission-value">Healthy</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress success" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">🐘</div>
+                        <div class="mission-info">
+                            <span class="mission-label">PostgreSQL</span>
+                            <span class="mission-value">Healthy</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress success" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-icon">📡</div>
+                        <div class="mission-info">
+                            <span class="mission-label">Telegram API</span>
+                            <span class="mission-value">Healthy</span>
+                            <div class="mission-bar">
+                                <div class="mission-progress success" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-icon">📊</span>
-                    <span class="stat-label">الخدمات المباعة</span>
-                    <span class="stat-value" id="total-services">0</span>
+
+                <!-- Quick Action Buttons -->
+                <div class="mission-actions">
+                    <button class="mission-btn" data-action="broadcast">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">Broadcast</span>
+                    </button>
+                    <button class="mission-btn" data-action="analytics">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">Analytics</span>
+                    </button>
+                    <button class="mission-btn" data-action="users">
+                        <span class="btn-icon">👥</span>
+                        <span class="btn-text">Users</span>
+                    </button>
+                    <button class="mission-btn" data-action="ai">
+                        <span class="btn-icon">🤖</span>
+                        <span class="btn-text">AI</span>
+                    </button>
+                    <button class="mission-btn" data-action="notifications">
+                        <span class="btn-icon">📨</span>
+                        <span class="btn-text">Notifications</span>
+                    </button>
+                    <button class="mission-btn" data-action="settings">
+                        <span class="btn-icon">⚙️</span>
+                        <span class="btn-text">Settings</span>
+                    </button>
+                    <button class="mission-btn" data-action="content">
+                        <span class="btn-icon">🗂️</span>
+                        <span class="btn-text">Content</span>
+                    </button>
+                    <button class="mission-btn" data-action="media">
+                        <span class="btn-icon">📂</span>
+                        <span class="btn-text">Media</span>
+                    </button>
+                    <button class="mission-btn" data-action="reports">
+                        <span class="btn-icon">📈</span>
+                        <span class="btn-text">Reports</span>
+                    </button>
+                    <button class="mission-btn" data-action="system">
+                        <span class="btn-icon">🛠️</span>
+                        <span class="btn-text">System</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="admin-actions">
-                <h3>إدارة المستخدمين</h3>
-                <div class="admin-controls">
-                    <input type="text" id="user-search" placeholder="بحث عن مستخدم..." class="admin-input">
-                    <button class="admin-btn" id="search-user">بحث</button>
+            <!-- User Inspector -->
+            <div id="user-inspector" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>👤 User Inspector</h1>
+                </div>
+
+                <div class="user-search-section">
+                    <input type="text" id="inspector-search" placeholder="بحث عن مستخدم بالاسم أو ID..." class="admin-input">
+                    <button class="admin-btn" id="inspect-user">🔍 بحث</button>
+                </div>
+
+                <div class="user-profile" id="user-profile" style="display: none;">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <div class="profile-info">
+                            <span class="profile-name" id="profile-name">أحمد محمد</span>
+                            <span class="profile-id" id="profile-id">ID: 123456789</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <span class="detail-label">الدولة</span>
+                            <span class="detail-value" id="profile-country">🇪🇬 مصر</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">اللغة</span>
+                            <span class="detail-value" id="profile-language">العربية</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">آخر دخول</span>
+                            <span class="detail-value" id="profile-last-login">منذ 2 ساعة</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">آخر قراءة</span>
+                            <span class="detail-value" id="profile-last-quran">سورة البقرة - صفحة 15</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">آخر ذكر</span>
+                            <span class="detail-value" id="profile-last-adhkar">أذكار الصباح</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">آخر صلاة</span>
+                            <span class="detail-value" id="profile-last-prayer">العصر - تم</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">آخر AI Chat</span>
+                            <span class="detail-value" id="profile-last-ai">قبل 5 ساعات</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="admin-btn" id="view-journey">📜 User Journey</button>
+                        <button class="admin-btn danger" id="ban-user">🚫 Ban User</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ban Center -->
+            <div id="ban-center" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>🚫 Ban Center</h1>
+                </div>
+
+                <div class="ban-controls">
+                    <input type="number" id="ban-user-id" placeholder="معرف المستخدم" class="admin-input">
+                    <select id="ban-type" class="admin-input">
+                        <option value="temporary">حظر مؤقت</option>
+                        <option value="permanent">حظر دائم</option>
+                    </select>
+                    <input type="text" id="ban-reason" placeholder="سبب الحظر" class="admin-input">
+                    <input type="datetime-local" id="ban-duration" class="admin-input" placeholder="مدة الحظر">
+                    <button class="admin-btn danger" id="execute-ban">🚫 تنفيذ الحظر</button>
+                </div>
+
+                <div class="banned-users">
+                    <h3>المستخدمين المحظورين</h3>
+                    <div class="banned-item">
+                        <div class="banned-info">
+                            <span class="banned-name">محمد أحمد</span>
+                            <span class="banned-id">ID: 987654321</span>
+                        </div>
+                        <div class="banned-reason">سب وإهانة</div>
+                        <div class="banned-actions">
+                            <button class="admin-btn" id="unban-user">✓ فك الحظر</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Activity Feed -->
+            <div id="activity-feed" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>🔥 Live Activity Feed</h1>
+                </div>
+
+                <div class="activity-feed">
+                    <div class="feed-item">
+                        <span class="feed-time">منذ 30 ثانية</span>
+                        <span class="feed-action">أحمد فتح القرآن</span>
+                        <span class="feed-icon">📖</span>
+                    </div>
+                    <div class="feed-item">
+                        <span class="feed-time">منذ دقيقة</span>
+                        <span class="feed-action">علي أكمل الأذكار</span>
+                        <span class="feed-icon">🤲</span>
+                    </div>
+                    <div class="feed-item">
+                        <span class="feed-time">منذ دقيقتين</span>
+                        <span class="feed-action">سارة أكملت التحدي</span>
+                        <span class="feed-icon">🏆</span>
+                    </div>
+                    <div class="feed-item">
+                        <span class="feed-time">منذ 3 دقائق</span>
+                        <span class="feed-action">محمد سأل AI</span>
+                        <span class="feed-icon">🤖</span>
+                    </div>
+                    <div class="feed-item">
+                        <span class="feed-time">منذ 5 دقائق</span>
+                        <span class="feed-action">فاطمة صلت العصر</span>
+                        <span class="feed-icon">🕌</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Monitor -->
+            <div id="system-monitor" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>📡 System Monitor</h1>
+                </div>
+
+                <div class="system-status">
+                    <h3>🖥️ System Health</h3>
+                    <div class="system-item">
+                        <span class="system-label">CPU Usage</span>
+                        <div class="system-bar">
+                            <div class="system-progress" style="width: 18%"></div>
+                        </div>
+                        <span class="system-value">18%</span>
+                    </div>
+                    <div class="system-item">
+                        <span class="system-label">RAM Usage</span>
+                        <div class="system-bar">
+                            <div class="system-progress" style="width: 45%"></div>
+                        </div>
+                        <span class="system-value">45%</span>
+                    </div>
+                    <div class="system-item">
+                        <span class="system-label">Storage</span>
+                        <div class="system-bar">
+                            <div class="system-progress" style="width: 62%"></div>
+                        </div>
+                        <span class="system-value">62%</span>
+                    </div>
+                </div>
+
+                <div class="service-status">
+                    <h3>🔌 Service Status</h3>
+                    <div class="service-item">
+                        <span class="service-name">PostgreSQL</span>
+                        <span class="service-status online">🟢 Online</span>
+                        <span class="service-latency">12ms</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Redis</span>
+                        <span class="service-status online">🟢 Online</span>
+                        <span class="service-latency">2ms</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Telegram API</span>
+                        <span class="service-status online">🟢 Online</span>
+                        <span class="service-latency">45ms</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Workers</span>
+                        <span class="service-status online">🟢 Online</span>
+                        <span class="service-latency">8 active</span>
+                    </div>
+                    <div class="service-item">
+                        <span class="service-name">Scheduler</span>
+                        <span class="service-status online">🟢 Online</span>
+                        <span class="service-latency">Running</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Flags -->
+            <div id="feature-flags" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>⚙️ Feature Flags</h1>
+                </div>
+
+                <div class="feature-flags-list">
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">🤖 AI Chat</span>
+                            <span class="flag-description">Enable/disable AI chat feature</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="ai-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">📖 Quran Reader</span>
+                            <span class="flag-description">Enable/disable Quran reader</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="quran-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">🤲 Adhkar</span>
+                            <span class="flag-description">Enable/disable Adhkar feature</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="adhkar-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">🕌 Prayer Times</span>
+                            <span class="flag-description">Enable/disable prayer times</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="prayer-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">💎 Points System</span>
+                            <span class="flag-description">Enable/disable points system</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="points-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">🏆 Challenges</span>
+                            <span class="flag-description">Enable/disable challenges</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="challenges-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">📊 Analytics</span>
+                            <span class="flag-description">Enable/disable analytics tracking</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="analytics-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-flag-item">
+                        <div class="flag-info">
+                            <span class="flag-name">🔔 Notifications</span>
+                            <span class="flag-description">Enable/disable push notifications</span>
+                        </div>
+                        <div class="flag-toggle">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="notifications-flag" checked>
+                                <span class="slider"></span>
+                            </div>
+                            <span class="flag-status">ON</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Center -->
+            <div id="notification-center" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>📬 Notification Center</h1>
+                </div>
+
+                <div class="notification-stats">
+                    <div class="notif-stat">
+                        <span class="notif-icon">⏳</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Pending</span>
+                            <span class="notif-value">45</span>
+                        </div>
+                    </div>
+                    <div class="notif-stat">
+                        <span class="notif-icon">📤</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Sending</span>
+                            <span class="notif-value">12</span>
+                        </div>
+                    </div>
+                    <div class="notif-stat">
+                        <span class="notif-icon">✅</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Delivered</span>
+                            <span class="notif-value">8,234</span>
+                        </div>
+                    </div>
+                    <div class="notif-stat">
+                        <span class="notif-icon">❌</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Failed</span>
+                            <span class="notif-value">3</span>
+                        </div>
+                    </div>
+                    <div class="notif-stat">
+                        <span class="notif-icon">🔄</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Retry Queue</span>
+                            <span class="notif-value">8</span>
+                        </div>
+                    </div>
+                    <div class="notif-stat">
+                        <span class="notif-icon">📊</span>
+                        <div class="notif-info">
+                            <span class="notif-label">Queue Length</span>
+                            <span class="notif-value">68</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-queue">
+                    <h3>📋 Queue Status</h3>
+                    <div class="queue-info">
+                        <span class="queue-label">Average Delay</span>
+                        <span class="queue-value">2.3s</span>
+                    </div>
+                    <div class="queue-info">
+                        <span class="queue-label">Processing Rate</span>
+                        <span class="queue-value">1,234/min</span>
+                    </div>
+                    <div class="queue-actions">
+                        <button class="admin-btn" id="pause-queue">⏸️ Pause Queue</button>
+                        <button class="admin-btn" id="resume-queue">▶️ Resume Queue</button>
+                        <button class="admin-btn danger" id="clear-queue">🗑️ Clear Queue</button>
+                    </div>
+                </div>
+
+                <div class="notification-log">
+                    <h3>📜 Recent Notifications</h3>
+                    <div class="log-item">
+                        <span class="log-time">2024-01-15 09:00</span>
+                        <span class="log-type">أذكار الصباح</span>
+                        <span class="log-status success">✓ Delivered</span>
+                        <span class="log-recipients">1,234 users</span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">2024-01-15 09:05</span>
+                        <span class="log-type">حديث اليوم</span>
+                        <span class="log-status sending">📤 Sending</span>
+                        <span class="log-recipients">890 users</span>
+                    </div>
+                    <div class="log-item">
+                        <span class="log-time">2024-01-15 09:10</span>
+                        <span class="log-type">تذكير الصلاة</span>
+                        <span class="log-status error">✗ Failed</span>
+                        <span class="log-recipients">0 users</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign Manager -->
+            <div id="campaign-manager" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>📢 Campaign Manager</h1>
+                </div>
+
+                <div class="campaign-create">
+                    <h3>إنشاء حملة جديدة</h3>
+                    <div class="admin-controls">
+                        <input type="text" id="campaign-name" placeholder="اسم الحملة" class="admin-input">
+                        <textarea id="campaign-message" placeholder="رسالة الحملة..." class="admin-input"></textarea>
+                        
+                        <h4>🎯 Smart Targeting</h4>
+                        <div class="targeting-options">
+                            <label class="target-option">
+                                <input type="checkbox" value="active" checked>
+                                <span>المستخدمين النشطين</span>
+                            </label>
+                            <label class="target-option">
+                                <input type="checkbox" value="inactive">
+                                <span>غير النشطين</span>
+                            </label>
+                            <label class="target-option">
+                                <input type="checkbox" value="quran-users">
+                                <span>مستخدمي القرآن فقط</span>
+                            </label>
+                            <label class="target-option">
+                                <input type="checkbox" value="ai-users">
+                                <span>مستخدمي AI</span>
+                            </label>
+                            <label class="target-option">
+                                <input type="checkbox" value="prayer-users">
+                                <span>مستخدمي الصلاة</span>
+                            </label>
+                        </div>
+
+                        <div class="targeting-filters">
+                            <select id="country-filter" class="admin-input">
+                                <option value="all">جميع الدول</option>
+                                <option value="EG">مصر</option>
+                                <option value="SA">السعودية</option>
+                                <option value="AE">الإمارات</option>
+                            </select>
+                            <select id="language-filter" class="admin-input">
+                                <option value="all">جميع اللغات</option>
+                                <option value="ar">العربية</option>
+                                <option value="en">الإنجليزية</option>
+                            </select>
+                        </div>
+
+                        <div class="campaign-schedule">
+                            <label>جدولة الحملة</label>
+                            <input type="datetime-local" id="campaign-schedule" class="admin-input">
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="admin-btn success" id="send-campaign">📤 إرسال الآن</button>
+                            <button class="admin-btn" id="schedule-campaign">📅 جدولة</button>
+                            <button class="admin-btn" id="preview-campaign">👁️ معاينة</button>
+                            <button class="admin-btn" id="test-campaign">🧪 إرسال تجريبي</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="campaign-list">
+                    <h3>الحملات النشطة</h3>
+                    <div class="campaign-item">
+                        <div class="campaign-info">
+                            <span class="campaign-name">أذكار الصباح</span>
+                            <span class="campaign-status active">نشط</span>
+                        </div>
+                        <div class="campaign-stats">
+                            <span>👥 1,234 مستخدم</span>
+                            <span>📊 89% تم الإرسال</span>
+                        </div>
+                        <div class="campaign-controls">
+                            <button class="campaign-btn pause">⏸️ Pause</button>
+                            <button class="campaign-btn clone">📋 Clone</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Dashboard -->
+            <div id="live-dashboard" class="admin-subpage">
+                <div class="header">
+                    <button class="back-btn" id="back-to-mission">←</button>
+                    <h1>📈 Live Dashboard</h1>
                 </div>
                 
-                <div id="user-results" class="user-results">
-                    <!-- User results will appear here -->
+                <div class="live-stats">
+                    <div class="live-stat">
+                        <span class="live-icon">👥</span>
+                        <div class="live-info">
+                            <span class="live-label">إجمالي المستخدمين</span>
+                            <span class="live-value">14,522</span>
+                        </div>
+                    </div>
+                    <div class="live-stat">
+                        <span class="live-icon">🟢</span>
+                        <div class="live-info">
+                            <span class="live-label">المتصلين الآن</span>
+                            <span class="live-value">234</span>
+                        </div>
+                    </div>
+                    <div class="live-stat">
+                        <span class="live-icon">📈</span>
+                        <div class="live-info">
+                            <span class="live-label">المستخدمين اليوم</span>
+                            <span class="live-value">1,234</span>
+                        </div>
+                    </div>
+                    <div class="live-stat">
+                        <span class="live-icon">📊</span>
+                        <div class="live-info">
+                            <span class="live-label">المستخدمين هذا الأسبوع</span>
+                            <span class="live-value">5,678</span>
+                        </div>
+                    </div>
                 </div>
 
-                <h3>إدارة النقاط</h3>
-                <div class="admin-controls">
-                    <input type="number" id="user-id-input" placeholder="معرف المستخدم" class="admin-input">
-                    <input type="number" id="points-amount" placeholder="عدد النقاط" class="admin-input">
-                    <button class="admin-btn add-points" id="add-points-btn">إضافة نقاط</button>
-                    <button class="admin-btn remove-points" id="remove-points-btn">خصم نقاط</button>
-                </div>
-
-                <h3>إدارة الخدمات</h3>
-                <div class="admin-controls">
-                    <select id="service-select" class="admin-input">
-                        <option value="premium-theme">ثيم متميز</option>
-                        <option value="badge-special">شارة خاصة</option>
-                        <option value="notification-premium">إشعارات متميزة</option>
-                        <option value="quran-premium">قرآن متميز</option>
-                    </select>
-                    <input type="number" id="service-cost" placeholder="السعر" class="admin-input">
-                    <button class="admin-btn" id="update-service-cost">تحديث السعر</button>
+                <div class="activity-highlights">
+                    <h3>🔥 أكثر ميزة استخدامًا</h3>
+                    <div class="highlight-item">
+                        <span class="highlight-rank">1</span>
+                        <span class="highlight-name">قراءة القرآن</span>
+                        <span class="highlight-count">8,212</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-rank">2</span>
+                        <span class="highlight-name">الأذكار</span>
+                        <span class="highlight-count">5,322</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-rank">3</span>
+                        <span class="highlight-name">AI Chat</span>
+                        <span class="highlight-count">2,194</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1537,9 +2237,17 @@
                 <span class="nav-icon">📖</span>
                 <span class="nav-label">القرآن</span>
             </button>
+            <button class="nav-btn" data-screen="points-system">
+                <span class="nav-icon">💎</span>
+                <span class="nav-label">النقاط</span>
+            </button>
             <button class="nav-btn" data-screen="profile">
                 <span class="nav-icon">👤</span>
-                <span class="nav-label">الملف</span>
+                <span class="nav-label">الملف الشخصي</span>
+            </button>
+            <button class="nav-btn admin-only" data-screen="admin-dashboard">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">الأدمن</span>
             </button>
         </nav>
     </div>
