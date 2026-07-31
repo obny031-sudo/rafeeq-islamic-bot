@@ -1854,7 +1854,7 @@ function loadProfileData() {
         const telegramUser = tg.initDataUnsafe?.user;
         
         // Admin user IDs (in production, fetch from backend API)
-        const adminUserIds = [123456789, 987654321]; // Replace with actual admin IDs
+        const adminUserIds = [6326713765]; // Replace with actual admin IDs
         
         // Check if user is admin
         const isAdmin = telegramUser && adminUserIds.includes(telegramUser.id);
