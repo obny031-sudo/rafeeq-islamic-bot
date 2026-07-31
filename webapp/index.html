@@ -1354,6 +1354,151 @@
             </div>
         </div>
 
+        <!-- Points System Screen -->
+        <div id="points-system" class="screen">
+            <div class="header">
+                <button class="back-btn" id="back-from-points">←</button>
+                <h1>نظام النقاط</h1>
+            </div>
+            
+            <div class="points-overview">
+                <div class="points-card">
+                    <div class="points-icon">💎</div>
+                    <div class="points-info">
+                        <span class="points-label">رصيدك الحالي</span>
+                        <span class="points-value" id="user-points">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="points-actions">
+                <h3>كيف تكسب النقاط؟</h3>
+                <div class="action-list">
+                    <div class="action-item">
+                        <span class="action-icon">📖</span>
+                        <span class="action-text">قراءة صفحة من القرآن</span>
+                        <span class="action-reward">+10 نقاط</span>
+                    </div>
+                    <div class="action-item">
+                        <span class="action-icon">🕌</span>
+                        <span class="action-text">إتمام صلاة</span>
+                        <span class="action-reward">+5 نقاط</span>
+                    </div>
+                    <div class="action-item">
+                        <span class="action-icon">🤲</span>
+                        <span class="action-text">إتمال أذكار اليوم</span>
+                        <span class="action-reward">+15 نقاط</span>
+                    </div>
+                    <div class="action-item">
+                        <span class="action-icon">📿</span>
+                        <span class="action-text">تسبيح 100 مرة</span>
+                        <span class="action-reward">+3 نقاط</span>
+                    </div>
+                    <div class="action-item">
+                        <span class="action-icon">🎯</span>
+                        <span class="action-text">إتمام تحدي يومي</span>
+                        <span class="action-reward">+20 نقاط</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="marketplace">
+                <h3>سوق الخدمات</h3>
+                <div class="service-list">
+                    <div class="service-item" data-service="premium-theme">
+                        <div class="service-icon">🎨</div>
+                        <div class="service-info">
+                            <span class="service-name">ثيم متميز</span>
+                            <span class="service-desc">احصل على ثيم خاص</span>
+                        </div>
+                        <button class="service-btn" data-cost="100">شراء (100)</button>
+                    </div>
+                    <div class="service-item" data-service="badge-special">
+                        <div class="service-icon">🏆</div>
+                        <div class="service-info">
+                            <span class="service-name">شارة خاصة</span>
+                            <span class="service-desc">شارة مميزة للملف</span>
+                        </div>
+                        <button class="service-btn" data-cost="200">شراء (200)</button>
+                    </div>
+                    <div class="service-item" data-service="notification-premium">
+                        <div class="service-icon">🔔</div>
+                        <div class="service-info">
+                            <span class="service-name">إشعارات متميزة</span>
+                            <span class="service-desc">إشعارات شخصية</span>
+                        </div>
+                        <button class="service-btn" data-cost="150">شراء (150)</button>
+                    </div>
+                    <div class="service-item" data-service="quran-premium">
+                        <div class="service-icon">📖</div>
+                        <div class="service-info">
+                            <span class="service-name">قرآن متميز</span>
+                            <span class="service-desc">ميزات قرآن إضافية</span>
+                        </div>
+                        <button class="service-btn" data-cost="300">شراء (300)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Screen -->
+        <div id="admin-dashboard" class="screen">
+            <div class="header">
+                <button class="back-btn" id="back-from-admin">←</button>
+                <h1>لوحة التحكم</h1>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <span class="stat-label">المستخدمين</span>
+                    <span class="stat-value" id="total-users">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💎</span>
+                    <span class="stat-label">النقاط الموزعة</span>
+                    <span class="stat-value" id="total-points">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-label">الخدمات المباعة</span>
+                    <span class="stat-value" id="total-services">0</span>
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <h3>إدارة المستخدمين</h3>
+                <div class="admin-controls">
+                    <input type="text" id="user-search" placeholder="بحث عن مستخدم..." class="admin-input">
+                    <button class="admin-btn" id="search-user">بحث</button>
+                </div>
+                
+                <div id="user-results" class="user-results">
+                    <!-- User results will appear here -->
+                </div>
+
+                <h3>إدارة النقاط</h3>
+                <div class="admin-controls">
+                    <input type="number" id="user-id-input" placeholder="معرف المستخدم" class="admin-input">
+                    <input type="number" id="points-amount" placeholder="عدد النقاط" class="admin-input">
+                    <button class="admin-btn add-points" id="add-points-btn">إضافة نقاط</button>
+                    <button class="admin-btn remove-points" id="remove-points-btn">خصم نقاط</button>
+                </div>
+
+                <h3>إدارة الخدمات</h3>
+                <div class="admin-controls">
+                    <select id="service-select" class="admin-input">
+                        <option value="premium-theme">ثيم متميز</option>
+                        <option value="badge-special">شارة خاصة</option>
+                        <option value="notification-premium">إشعارات متميزة</option>
+                        <option value="quran-premium">قرآن متميز</option>
+                    </select>
+                    <input type="number" id="service-cost" placeholder="السعر" class="admin-input">
+                    <button class="admin-btn" id="update-service-cost">تحديث السعر</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Audio Player Dock -->
         <div class="audio-player-dock" id="audio-dock">
             <div class="audio-info">

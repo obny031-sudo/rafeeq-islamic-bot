@@ -2447,15 +2447,377 @@ function initAppActions() {
     });
     
     document.getElementById('privacy-policy').addEventListener('click', function() {
-        tg.showAlert('سياسة الخصوصية');
+        tg.showAlert('سياسة الخصوصية: نحترم خصوصيتك');
         tg.HapticFeedback.impactOccurred('light');
     });
     
     document.getElementById('terms').addEventListener('click', function() {
-        tg.showAlert('الشروط والأحكام');
+        tg.showAlert('الشروط والأحكام: استخدام التطبيق يعني الموافقة على الشروط');
         tg.HapticFeedback.impactOccurred('light');
     });
 }
+
+// Points System Module
+function initPointsSystem() {
+    initPointsNavigation();
+    initPointsActions();
+    initMarketplace();
+    loadUserPoints();
+}
+
+function initPointsNavigation() {
+    document.getElementById('back-from-points').addEventListener('click', function() {
+        navigateToScreen('dashboard');
+        tg.HapticFeedback.impactOccurred('light');
+    });
+    
+    document.getElementById('back-from-admin').addEventListener('click', function() {
+        navigateToScreen('dashboard');
+        tg.HapticFeedback.impactOccurred('light');
+    });
+}
+
+function initPointsActions() {
+    // Add points for various actions
+    const actions = {
+        'quran-reading': 10,
+        'prayer-completed': 5,
+        'adhkar-completed': 15,
+        'tasbeeh-100': 3,
+        'challenge-completed': 20
+    };
+    
+    // Simulate earning points
+    Object.keys(actions).forEach(action => {
+        const element = document.querySelector(`[data-action="${action}"]`);
+        if (element) {
+            element.addEventListener('click', function() {
+                addPoints(actions[action]);
+                tg.HapticFeedback.notificationOccurred('success');
+            });
+        }
+    });
+}
+
+function addPoints(amount) {
+    try {
+        let currentPoints = parseInt(localStorage.getItem('userPoints') || '0');
+        currentPoints += amount;
+        localStorage.setItem('userPoints', currentPoints);
+        updatePointsDisplay(currentPoints);
+        
+        // Show notification
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.showAlert(`+${amount} نقاط! رصيدك الجديد: ${currentPoints}`);
+        }
+    } catch (error) {
+        console.error('Error adding points:', error);
+    }
+}
+
+function removePoints(amount) {
+    try {
+        let currentPoints = parseInt(localStorage.getItem('userPoints') || '0');
+        if (currentPoints >= amount) {
+            currentPoints -= amount;
+            localStorage.setItem('userPoints', currentPoints);
+            updatePointsDisplay(currentPoints);
+            return true;
+        } else {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.showAlert('رصيد النقاط غير كافٍ');
+            }
+            return false;
+        }
+    } catch (error) {
+        console.error('Error removing points:', error);
+        return false;
+    }
+}
+
+function loadUserPoints() {
+    try {
+        const points = localStorage.getItem('userPoints') || '0';
+        updatePointsDisplay(parseInt(points));
+    } catch (error) {
+        console.error('Error loading points:', error);
+    }
+}
+
+function updatePointsDisplay(points) {
+    const pointsElement = document.getElementById('user-points');
+    if (pointsElement) {
+        pointsElement.textContent = points;
+    }
+}
+
+function initMarketplace() {
+    const serviceButtons = document.querySelectorAll('.service-btn');
+    serviceButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const cost = parseInt(this.getAttribute('data-cost'));
+            const service = this.closest('.service-item').getAttribute('data-service');
+            
+            if (removePoints(cost)) {
+                purchaseService(service);
+                tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+        });
+    });
+}
+
+function purchaseService(service) {
+    try {
+        // Get purchased services
+        let purchasedServices = JSON.parse(localStorage.getItem('purchasedServices') || '[]');
+        
+        if (!purchasedServices.includes(service)) {
+            purchasedServices.push(service);
+            localStorage.setItem('purchasedServices', JSON.stringify(purchasedServices));
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.showAlert('تم شراء الخدمة بنجاح!');
+            }
+        } else {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.showAlert('لقد اشتريت هذه الخدمة بالفعل');
+            }
+        }
+    } catch (error) {
+        console.error('Error purchasing service:', error);
+    }
+}
+
+// Admin Dashboard Module
+function initAdminDashboard() {
+    initAdminNavigation();
+    initAdminStats();
+    initAdminUserManagement();
+    initAdminPointsManagement();
+    initAdminServiceManagement();
+}
+
+function initAdminNavigation() {
+    // Check if user is admin (simplified for demo)
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    
+    if (!isAdmin) {
+        // Hide admin dashboard for non-admin users
+        const adminScreen = document.getElementById('admin-dashboard');
+        if (adminScreen) {
+            adminScreen.style.display = 'none';
+        }
+    }
+}
+
+function initAdminStats() {
+    // Simulated stats for demo
+    document.getElementById('total-users').textContent = '1,234';
+    document.getElementById('total-points').textContent = '45,678';
+    document.getElementById('total-services').textContent = '89';
+}
+
+function initAdminUserManagement() {
+    const searchButton = document.getElementById('search-user');
+    const searchInput = document.getElementById('user-search');
+    
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', function() {
+            const searchTerm = searchInput.value;
+            searchUsers(searchTerm);
+        });
+    }
+}
+
+function searchUsers(searchTerm) {
+    try {
+        // Simulated user search for demo
+        const mockUsers = [
+            { id: 123456789, name: 'أحمد محمد', points: 150 },
+            { id: 987654321, name: 'فاطمة علي', points: 320 },
+            { id: 456789123, name: 'محمد أحمد', points: 85 }
+        ];
+        
+        const results = mockUsers.filter(user => 
+            user.name.includes(searchTerm) || user.id.toString().includes(searchTerm)
+        );
+        
+        displayUserResults(results);
+    } catch (error) {
+        console.error('Error searching users:', error);
+    }
+}
+
+function displayUserResults(users) {
+    const resultsContainer = document.getElementById('user-results');
+    if (!resultsContainer) return;
+    
+    if (users.length === 0) {
+        resultsContainer.innerHTML = '<p>لم يتم العثور على مستخدمين</p>';
+        return;
+    }
+    
+    let html = '';
+    users.forEach(user => {
+        html += `
+            <div class="user-result-item">
+                <span class="user-result-name">${user.name} (ID: ${user.id})</span>
+                <span class="user-result-points">${user.points} نقطة</span>
+            </div>
+        `;
+    });
+    
+    resultsContainer.innerHTML = html;
+}
+
+function initAdminPointsManagement() {
+    const addPointsBtn = document.getElementById('add-points-btn');
+    const removePointsBtn = document.getElementById('remove-points-btn');
+    
+    if (addPointsBtn) {
+        addPointsBtn.addEventListener('click', function() {
+            const userId = document.getElementById('user-id-input').value;
+            const points = parseInt(document.getElementById('points-amount').value);
+            
+            if (userId && points) {
+                manageUserPoints(userId, points, 'add');
+            }
+        });
+    }
+    
+    if (removePointsBtn) {
+        removePointsBtn.addEventListener('click', function() {
+            const userId = document.getElementById('user-id-input').value;
+            const points = parseInt(document.getElementById('points-amount').value);
+            
+            if (userId && points) {
+                manageUserPoints(userId, points, 'remove');
+            }
+        });
+    }
+}
+
+function manageUserPoints(userId, points, action) {
+    try {
+        // Simulated API call for demo
+        const message = action === 'add' 
+            ? `تم إضافة ${points} نقطة للمستخدم ${userId}`
+            : `تم خصم ${points} نقطة من المستخدم ${userId}`;
+        
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert(message);
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+        
+        // Clear inputs
+        document.getElementById('user-id-input').value = '';
+        document.getElementById('points-amount').value = '';
+    } catch (error) {
+        console.error('Error managing user points:', error);
+    }
+}
+
+function initAdminServiceManagement() {
+    const updateCostBtn = document.getElementById('update-service-cost');
+    
+    if (updateCostBtn) {
+        updateCostBtn.addEventListener('click', function() {
+            const service = document.getElementById('service-select').value;
+            const cost = document.getElementById('service-cost').value;
+            
+            if (service && cost) {
+                updateServiceCost(service, parseInt(cost));
+            }
+        });
+    }
+}
+
+function updateServiceCost(service, cost) {
+    try {
+        // Simulated API call for demo
+        const message = `تم تحديث سعر ${service} إلى ${cost} نقطة`;
+        
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.showAlert(message);
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
+        
+        // Clear input
+        document.getElementById('service-cost').value = '';
+    } catch (error) {
+        console.error('Error updating service cost:', error);
+    }
+}
+
+// Add navigation to points system and admin dashboard
+function initNavigation() {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const screenId = this.getAttribute('data-screen');
+            navigateToScreen(screenId);
+            
+            // Update active state
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        });
+    });
+    
+    // Add special navigation for points and admin
+    const profileScreen = document.getElementById('profile');
+    if (profileScreen) {
+        // Add points button to profile
+        const pointsButton = document.createElement('button');
+        pointsButton.className = 'action-btn';
+        pointsButton.textContent = 'نظام النقاط';
+        pointsButton.addEventListener('click', function() {
+            navigateToScreen('points-system');
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
+        });
+        
+        const appActions = profileScreen.querySelector('.app-actions');
+        if (appActions) {
+            appActions.insertBefore(pointsButton, appActions.firstChild);
+        }
+        
+        // Add admin button for admin users
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        if (isAdmin) {
+            const adminButton = document.createElement('button');
+            adminButton.className = 'action-btn';
+            adminButton.textContent = 'لوحة التحكم';
+            adminButton.addEventListener('click', function() {
+                navigateToScreen('admin-dashboard');
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                }
+            });
+            
+            appActions.insertBefore(adminButton, appActions.firstChild);
+        }
+    }
+}
+
+// Initialize all modules
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        initApp();
+        initNavigation();
+        initPointsSystem();
+        initAdminDashboard();
+    } catch (error) {
+        console.error('Error initializing app:', error);
+    }
+});
 
 // Offline Data Caching Module
 function initOfflineCache() {
