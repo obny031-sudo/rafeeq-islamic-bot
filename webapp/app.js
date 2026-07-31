@@ -1888,6 +1888,17 @@ function loadProfileData() {
             badges: '2 شارات'
         };
         
+        // Set user avatar from Telegram photo if available
+        if (telegramUser?.photo_url) {
+            const userAvatar = document.getElementById('user-avatar');
+            if (userAvatar) {
+                userAvatar.style.backgroundImage = `url(${telegramUser.photo_url})`;
+                userAvatar.style.backgroundSize = 'cover';
+                userAvatar.style.backgroundPosition = 'center';
+                userAvatar.textContent = '';
+            }
+        }
+        
         // Update profile UI with null checks
         const userNameEl = document.getElementById('user-name');
         if (userNameEl) userNameEl.textContent = profileData.name;
@@ -2979,15 +2990,102 @@ function initAdminDashboard() {
 }
 
 function initAdminNavigation() {
-    // Check if user is admin (simplified for demo)
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-    
-    if (!isAdmin) {
-        // Hide admin dashboard for non-admin users
-        const adminScreen = document.getElementById('admin-dashboard');
-        if (adminScreen) {
-            adminScreen.style.display = 'none';
+    try {
+        // Check if user is admin using Telegram user ID
+        const telegramUser = tg.initDataUnsafe?.user;
+        const adminUserIds = [6326713765];
+        const isAdmin = telegramUser && adminUserIds.includes(telegramUser.id);
+        
+        if (!isAdmin) {
+            // Hide admin dashboard for non-admin users
+            const adminScreen = document.getElementById('admin-dashboard');
+            if (adminScreen) {
+                adminScreen.style.display = 'none';
+            }
+        } else {
+            // Initialize admin subpage navigation
+            initAdminSubpageNavigation();
         }
+    } catch (error) {
+        console.error('Error initializing admin navigation:', error);
+    }
+}
+
+function initAdminSubpageNavigation() {
+    try {
+        // Back button to return to admin dashboard
+        document.querySelectorAll('.back-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetScreen = this.dataset.screen;
+                if (targetScreen) {
+                    navigateToScreen(targetScreen);
+                } else {
+                    // Default to admin dashboard
+                    navigateToScreen('admin-dashboard');
+                }
+                safeHapticFeedback('light');
+            });
+        });
+        
+        // Admin dashboard navigation buttons (using data-action)
+        const adminNavButtons = document.querySelectorAll('.mission-btn');
+        adminNavButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.dataset.action;
+                if (action) {
+                    handleAdminAction(action);
+                }
+                safeHapticFeedback('light');
+            });
+        });
+    } catch (error) {
+        console.error('Error initializing admin subpage navigation:', error);
+    }
+}
+
+function handleAdminAction(action) {
+    try {
+        // Map actions to subpage IDs
+        const actionToSubpage = {
+            'broadcast': 'broadcast-center',
+            'analytics': 'live-dashboard',
+            'users': 'user-management',
+            'ai': 'ai-chat',
+            'notifications': 'notification-center',
+            'settings': 'feature-flags',
+            'content': 'content-manager',
+            'media': 'media-manager',
+            'reports': 'analytics-dashboard',
+            'system': 'system-monitor'
+        };
+        
+        const subpageId = actionToSubpage[action];
+        if (subpageId) {
+            showAdminSubpage(subpageId);
+        } else {
+            safeShowAlert(`Action: ${action}`);
+        }
+    } catch (error) {
+        console.error('Error handling admin action:', error);
+    }
+}
+
+function showAdminSubpage(subpageId) {
+    try {
+        // Hide all admin subpages
+        document.querySelectorAll('.admin-subpage').forEach(subpage => {
+            subpage.classList.remove('active');
+            subpage.style.display = 'none';
+        });
+        
+        // Show target subpage
+        const targetSubpage = document.getElementById(subpageId);
+        if (targetSubpage) {
+            targetSubpage.classList.add('active');
+            targetSubpage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error showing admin subpage:', error);
     }
 }
 
